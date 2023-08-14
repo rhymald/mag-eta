@@ -19,20 +19,14 @@ func RunAPI(ipAddr string) {
 	router := gin.New()
 	router.Use(gin.Recovery())
 	router.Use(jsonLoggerMiddleware())
-	router.GET("/", hiThere)
+	router.GET("/", around)
 	router.Run(ipAddr)
-}
-
-func hiThere(c *gin.Context) { 
-	c.IndentedJSON(200, "Hello world!")
 }
 
 func jsonLoggerMiddleware() gin.HandlerFunc {
 	return gin.LoggerWithFormatter(
 		func(params gin.LogFormatterParams) string {
-			if len(params.Path) >= 7 {
-				if params.StatusCode == 200 && params.Path[:7] == "/around" { return "" }
-			}
+			// if params.StatusCode == 200 && params.Path == "/" { return "" }
 			log := LogEvent{
 				Status:  params.StatusCode,
 				Latency: fmt.Sprintf("%0.3fms", float64(params.Latency.Microseconds())/1000),
