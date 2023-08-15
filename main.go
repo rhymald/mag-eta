@@ -10,5 +10,5 @@ var (
 
 func init() {}
 func main() {
-	api.RunAPI(ipAddress)
+	api.Init_API(ipAddress)
 }

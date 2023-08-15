@@ -15,7 +15,7 @@ type LogEvent struct {
 	Path    string `json:"Path"`
 }
 
-func RunAPI(ipAddr string) {
+func Init_API(ipAddr string) {
 	router := gin.New()
 	router.Use(gin.Recovery())
 	router.Use(jsonLoggerMiddleware())
