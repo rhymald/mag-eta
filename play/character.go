@@ -9,7 +9,7 @@ import (
 type Character struct {
 	Base *BasicStats
 	Atts *Attributes
-	HP int
+	HP *primitives.Health
 	sync.Mutex
 }
 
@@ -33,6 +33,7 @@ func Init_BasicStats() *BasicStats {
 func (base *BasicStats) Init_Character() *Character {
 	var buffer Character 
 	buffer.Base = base
+	buffer.HP = primitives.Init_Health()
 	return &buffer
 }
 
