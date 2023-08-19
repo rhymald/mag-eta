@@ -1,0 +1,48 @@
+---
+version: "3.9"
+services: 
+
+  mag: 
+    build: .
+  # image: rhymald/mag:latest
+    ports:
+      - 4917:4917
+      - 9093:9093
+    environment:
+      - GIN_MODE=release
+      - CACHEDB_WRITER_URL=postgresql://root@cockroachdb:26257/grid?sslmode=disable
+    deploy:
+      resources:
+        limits:
+          # cpus: '0.2'
+          memory: 6144M
+        reservations:
+          # cpus: '0.5'
+          memory: 6144M
+    links:
+      - cockroachdb
+      # - otel-collector
+    depends_on:
+      - cockroachdb
+
+  cockroachdb:
+    image: cockroachdb/cockroach:latest
+    command: start-single-node --http-addr=0.0.0.0:8080 --insecure
+    ports: 
+      - 8080:8080
+      - 26257:26257
+    # environment: 
+    #   - COCKROACH_DATABASE=grid
+    #   - COCKROACH_USER=rhymald
+    #   - COCKROACH_SKIP_KEY_PERMISSION_CHECK=true
+    # deploy:
+    #   resources:
+    #     limits:
+    #       # cpus: '0.2'
+    #       memory: 2048M
+    #     reservations:
+    #       # cpus: '0.5'
+    #       memory: 2048M
+    # volumes:
+    #   - '/mnt/ramdisk:/cockroach/cockroach-data'
+        # ^ sudo mount -t tmpfs -o rw,size=2G tmpfs /mnt/ramdisk
