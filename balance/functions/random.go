@@ -20,7 +20,7 @@ func Rand() float64 {
 }
 
 func Ntrp(a float64) float64 { 
-  randy := (Epoch() % 1000) / 300
+  randy := (Epoch() % 1000) / 333
   entropy := math.Log10( math.Abs(a)+1 )/25 
   if randy == 2 { a = a*(1+MinEntropy+entropy) }
   if randy == 0 { a = a/(1+MinEntropy+entropy) }
