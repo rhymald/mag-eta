@@ -7,6 +7,7 @@ import (
 const (
 	TAxisStep = 400 //ms for grid
 	TRange = 80 //steps per bucket, must be >= Retro
+	LifeCycleQueuePause = 1618
 )
 
 var StartEpoch = int(time.Now().UnixNano())

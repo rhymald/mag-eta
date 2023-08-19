@@ -13,7 +13,7 @@ type Tracing struct {
 
 type State struct {
 	Trace [3]*Tracing
-	// Effects
+	Effects map[int]*primitives.Effect
 	Write struct {
 		Body primitives.Stream
 		HP primitives.Health
@@ -21,5 +21,6 @@ type State struct {
 	}
 	Current *Character
 	Later Character
+	sync.Mutex
 }
 
