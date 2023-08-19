@@ -8,7 +8,7 @@ import (
 	"encoding/binary"	
 )
 
-const minEntropy = 0.0132437
+// const MinEntropy = 0.0132437
 
 func Rand() float64 {
   x := (time.Now().UnixNano())

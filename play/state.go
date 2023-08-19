@@ -20,7 +20,29 @@ type State struct {
 		// Actions 
 	}
 	Current *Character
-	Later Character
+	Later struct {
+		Body primitives.Stream
+		HP primitives.Health
+	}
 	sync.Mutex
 }
 
+func (c *Character) Init_State() *State {
+	var buffer State
+	c.Lock()
+	buffer.Current = c
+	buffer.Effects = make(map[int]*primitives.Effect)
+	// buffer.Later.Time = make(map[string]int)
+	// buffer.Later.Time["Life"] = base.Epoch()
+	buffer.Later.HP = *c.HP
+	buffer.Later.Body = *c.Base.Body
+	c.Unlock()
+	// buffer.Writing.Time = make(map[string]int)
+	// buffer.Writing.Time["Life"] = 0 
+	// buffer.Writing.Life = *(base.MakeLife())
+	// buffer.Writing.Life.Rate = 0
+	for bucket := 0 ; bucket < 3 ; bucket++ {
+		buffer.Trace[bucket] = CleanTrace()
+	}
+	return &buffer
+}

@@ -20,6 +20,8 @@ func Init_API(ipAddr string) {
 	router.Use(gin.Recovery())
 	router.Use(jsonLoggerMiddleware())
 	router.GET("/", around)
+	router.GET("/:myplayerid", around)
+	router.GET("/login", login)
 	router.Run(ipAddr)
 }
 
