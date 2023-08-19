@@ -8,7 +8,7 @@ import (
 	"encoding/binary"	
 )
 
-// const MinEntropy = 0.0132437
+const MinEntropy = 0.0132437
 
 func Rand() float64 {
   x := (time.Now().UnixNano())
@@ -19,13 +19,13 @@ func Rand() float64 {
   return rand.New(rand.NewSource( int64(sum) )).Float64()
 }
 
-// func Ntrp(a float64) float64 { 
-//   randy := (Epoch() % 1000) / 300
-//   entropy := math.Log10( math.Abs(a)+1 )/25 
-//   if randy == 2 { a = a*(1+minEntropy+entropy) }
-//   if randy == 0 { a = a/(1+minEntropy+entropy) }
-//   return math.Round( a*1000 ) / 1000
-// }
+func Ntrp(a float64) float64 { 
+  randy := (Epoch() % 1000) / 300
+  entropy := math.Log10( math.Abs(a)+1 )/25 
+  if randy == 2 { a = a*(1+MinEntropy+entropy) }
+  if randy == 0 { a = a/(1+MinEntropy+entropy) }
+  return math.Round( a*1000 ) / 1000
+}
 
 func Vector(args ...float64) float64 { 
 	sum := 0.0

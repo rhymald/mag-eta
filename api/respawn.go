@@ -13,5 +13,7 @@ func login(c *gin.Context) {
 	char.Init_Attributes()
 	state := char.Init_State()
 	id := theWorld.Login(state)
+	go func(){ state.Lifecycle_EffectConsumer() }()
+	go func(){ state.Lifecycle_Regenerate() }()
 	c.IndentedJSON(200, struct{ ID string ; Result string }{ ID: id, Result: "Successfully Logged In" })
 }
