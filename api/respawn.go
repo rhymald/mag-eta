@@ -14,6 +14,8 @@ func login(c *gin.Context) {
 	char.Init_Attributes()
 	state := char.Init_State()
 	id := theWorld.Login(state)
+	_, writer := theWorld.WhichGrid()
+	writer.Reg.Register(id)
 	go func(){ state.Lifecycle_EffectConsumer() }()
 	go func(){ state.Lifecycle_Regenerate() }()
 	go func(){ for { state.Move( (1+functions.Rand())/8, true, theWorld.Queue.Chan ) }}()

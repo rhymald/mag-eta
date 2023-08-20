@@ -10,7 +10,9 @@ type World struct {
 	Queue struct {
 		Chan chan map[string][][3]int
 		Buffer []map[string][][3]int
+		sync.Mutex
 	}
+	Grid [3]*Grid
 	ByID *ByIDList
 }
 
@@ -27,8 +29,19 @@ func Init_World() *World {
 	buffer.Queue.Chan = make(chan map[string][][3]int)
 	buffer.Queue.Buffer = []map[string][][3]int{}
 	buffer.ID = functions.GetID( functions.StartEpoch/1000000, functions.StartEpoch%1000000 )
+	for i:=0 ; i<3 ; i++ {buffer.Grid[i] = Init_Grid(0, 0)}
 	go func(){ (&buffer).GridWriter_ByPush() }()
 	return &buffer
+}
+
+func (w *World) WhichGrid() (*Grid, *Grid) {
+	tAxisStep, tRange := functions.TAxisStep, functions.TRange
+	epoch := functions.Epoch()
+	even := (epoch/(tRange*tAxisStep))%3
+	read, write := (*w).Grid[(even+2)%3], (*w).Grid[(even+3)%3] 
+	x, y := write.CentralPos()
+	(*w).Grid[(even+1)%3] = Init_Grid( x, y )
+	return read, write
 }
 
 func (w *World) Login(st *State) string {
@@ -43,7 +56,7 @@ func (w *World) Login(st *State) string {
 func (w *World) GridWriter_ByPush() {
 	writeToCache := (*w).Queue.Chan
 	for {
-		_ = <- writeToCache
+		_ = <- writeToCache // just a black hole
 		// (*w).Queue.Buffer = append((*w).Queue.Buffer, char)
 	}
 }
