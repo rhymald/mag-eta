@@ -6,5 +6,5 @@ import (
 )
 
 func testWorld(c *gin.Context) {
-	c.IndentedJSON(200, theWorld.Grid)
+	c.IndentedJSON(200, theWorld.Grid) // world too big to output
 }

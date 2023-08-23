@@ -47,7 +47,7 @@ func (gr *Grid) Put_ID_to_XYT(id string, x, y, t int) {
 	r := functions.Round( math.Sqrt( float64(x*x + y*y) ))
 	v := functions.Round( math.Atan( float64(y)/float64(x) ) / math.Pi * 1000 ) 
 	gr.X.Put(t, x, id)
-	gr.Y.Put(t, x, id)
+	gr.Y.Put(t, y, id)
 	gr.V.Put(t, v, id)
 	gr.R.Put(t, r, id)
 	gr.W.Lock()
