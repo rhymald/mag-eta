@@ -39,7 +39,7 @@ func (w *World) WhichGrid() (*Grid, *Grid) {
 	epoch := functions.Epoch()
 	even := (epoch/(tRange*tAxisStep))%3
 	read, write := (*w).Grid[(even+2)%3], (*w).Grid[(even+3)%3] 
-	x, y := write.CentralPos()
+	x, y := write.Get_CentralPos()
 	(*w).Grid[(even+1)%3] = Init_Grid( x, y )
 	return read, write
 }
@@ -56,7 +56,10 @@ func (w *World) Login(st *State) string {
 func (w *World) GridWriter_ByPush() {
 	writeToCache := (*w).Queue.Chan
 	for {
-		_ = <- writeToCache // just a black hole
-		// (*w).Queue.Buffer = append((*w).Queue.Buffer, char)
+		input := <- writeToCache // just a black hole
+		for id, posList := range input { for _, pos := range posList {
+			_, writer := w.WhichGrid()
+			writer.Put_ID_to_XYT(id, pos[1], pos[2], pos[0])
+		}}
 	}
 }

@@ -5,7 +5,7 @@ import (
 	"sync"
 )
 
-func CleanTrace() *Tracing { return &Tracing{ Trxy: make(map[int][3]int) }}
+func Init_Tracing() *Tracing { return &Tracing{ Trxy: make(map[int][3]int) }}
 type Tracing struct {
 	Trxy map[int][3]int
 	sync.Mutex
@@ -42,7 +42,7 @@ func (c *Character) Init_State() *State {
 	// buffer.Writing.Life = *(base.MakeLife())
 	// buffer.Writing.Life.Rate = 0
 	for bucket := 0 ; bucket < 3 ; bucket++ {
-		buffer.Trace[bucket] = CleanTrace()
+		buffer.Trace[bucket] = Init_Tracing()
 	}
 	return &buffer
 }
