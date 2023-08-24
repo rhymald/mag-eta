@@ -50,7 +50,7 @@ func (st *State) Move(rotate float64, step bool, writeToCache chan map[string][]
 	}
 	(*st).Trace[even].Lock()
 	renew := (*st).Trace[even].Trxy
-	renew[now] = newstep //else { (*st).Trace.Odd[now+(tRange*tAxisStep)/tAxisStep] = newstep }
+	renew[now] = newstep // here-2
 	(*st).Trace[even].Trxy = renew
 	(*st).Trace[even].Unlock()
 	toWrite[id] = append(toWrite[id], [3]int{now, newstep[1], newstep[2]})
@@ -68,7 +68,7 @@ func (st *State) Path() [5][2]int {
 	if len(trace)+len(later) == 0 { return [5][2]int{} }
 	buffer := make(map[int][3]int)
 	for ts, each := range later { buffer[ts-tRange] = each }
-	for ts, each := range trace { buffer[ts] = each }
+	for ts, each := range trace { buffer[ts] = each } // here-2
 	tIndex, idx := []int{}, 0
 	for i:=tRange ; i>-tRange ; i-- {
 		if _, ok := buffer[i] ; ok { tIndex = append(tIndex, i) ; idx++ }

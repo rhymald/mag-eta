@@ -44,8 +44,8 @@ func (gr *Grid) Get_CentralPos() (int, int) {
 }
 
 func (gr *Grid) Put_ID_to_XYT(id string, x, y, t int) {
-	xc, yc := gr.Get_CentralPos()
-	x += -xc ; y += -yc
+	// xc, yc := gr.Get_CentralPos()
+	// x += -xc ; y += -yc
 	r := functions.Round( math.Sqrt( float64(x*x + y*y) ))
 	v := functions.Round( math.Atan( float64(y)/float64(x) ) / math.Pi * 1000 ) 
 	gr.Lock()
