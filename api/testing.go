@@ -2,9 +2,27 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	// "rhymald/mag-eta/play"
+	"rhymald/mag-eta/balance/functions"
 )
 
+type Testing_Response struct {
+	PosW [2]int
+	Xw map[string][3]int
+	Yw map[string][3]int
+	PosR [2]int
+	Xr map[string][3]int
+	Yr map[string][3]int
+}
+
 func testWorld(c *gin.Context) {
-	c.IndentedJSON(200, theWorld.Grid) // world too big to output
+	targetX, targetY, targetAOE, targetT := 0, 0, 2000, functions.TAxis()
+	var buffer Testing_Response
+	reader, writer := theWorld.WhichGrid()
+	buffer.PosR[0], buffer.PosR[1] = reader.Get_CentralPos()
+	buffer.PosW[0], buffer.PosW[1] = writer.Get_CentralPos()
+	buffer.Xr = reader.X.Get(targetX, targetAOE, targetT)
+	buffer.Xw = writer.X.Get(targetX, targetAOE, targetT)
+	buffer.Yr = reader.X.Get(targetY, targetAOE, targetT)
+	buffer.Yw = writer.X.Get(targetY, targetAOE, targetT)
+	c.IndentedJSON(200, buffer) // world too big to output
 }

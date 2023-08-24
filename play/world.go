@@ -14,6 +14,7 @@ type World struct {
 	}
 	Grid [3]*Grid
 	ByID *ByIDList
+	sync.Mutex
 }
 
 type ByIDList struct {
@@ -38,9 +39,11 @@ func (w *World) WhichGrid() (*Grid, *Grid) {
 	tAxisStep, tRange := functions.TAxisStep, functions.TRange
 	epoch := functions.Epoch()
 	even := (epoch/(tRange*tAxisStep))%3
+	w.Lock()
 	read, write := (*w).Grid[(even+2)%3], (*w).Grid[(even+3)%3] 
 	x, y := write.Get_CentralPos()
 	(*w).Grid[(even+1)%3] = Init_Grid( x, y )
+	w.Unlock()
 	return read, write
 }
 
