@@ -18,6 +18,7 @@ type Grid struct {
 	}
 	X, Y, V, R *Axis
 	Reg *Registry
+	sync.Mutex
 }
 
 func Init_Grid(x, y int) *Grid {
@@ -32,6 +33,7 @@ func Init_Grid(x, y int) *Grid {
 	buffer.Center.X, buffer.Center.Y = x, y 
 	return &buffer
 }
+
 func (gr *Grid) Get_CentralPos() (int, int) {
 	x, y := 0, 0
 	(*gr).W.Lock()
@@ -46,17 +48,21 @@ func (gr *Grid) Put_ID_to_XYT(id string, x, y, t int) {
 	x += -xc ; y += -yc
 	r := functions.Round( math.Sqrt( float64(x*x + y*y) ))
 	v := functions.Round( math.Atan( float64(y)/float64(x) ) / math.Pi * 1000 ) 
+	gr.Lock()
 	gr.X.Put(t, x, id)
 	gr.Y.Put(t, y, id)
 	gr.V.Put(t, v, id)
 	gr.R.Put(t, r, id)
+	gr.Unlock()
 	gr.W.Lock()
 	(*gr).W.Counter += 1
 	write := (*gr).W.Sum
 	write[0] += x ; write[1] += y
 	(*gr).W.Sum = write
 	gr.W.Unlock()
+	gr.Lock()
 	gr.Reg.Register(id)
+	gr.Unlock()
 }
 
 func (gr *Grid) Get_Square(x, y, r int) map[string][4]int {

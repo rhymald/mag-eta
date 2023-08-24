@@ -20,9 +20,13 @@ func testWorld(c *gin.Context) {
 	reader, writer := theWorld.WhichGrid()
 	buffer.PosR[0], buffer.PosR[1] = reader.Get_CentralPos()
 	buffer.PosW[0], buffer.PosW[1] = writer.Get_CentralPos()
+	reader.Lock()
 	buffer.Xr = reader.X.Get(targetX, targetAOE, targetT)
-	buffer.Xw = writer.X.Get(targetX, targetAOE, targetT)
 	buffer.Yr = reader.X.Get(targetY, targetAOE, targetT)
+	reader.Unlock()
+	writer.Lock()
+	buffer.Xw = writer.X.Get(targetX, targetAOE, targetT)
 	buffer.Yw = writer.X.Get(targetY, targetAOE, targetT)
+	writer.Unlock()
 	c.IndentedJSON(200, buffer) // world too big to output
 }
