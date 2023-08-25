@@ -2,14 +2,9 @@ package play
 
 import (
 	"rhymald/mag-eta/balance/primitives"
+	// "rhymald/mag-eta/balance/functions"
 	"sync"
 )
-
-func Init_Tracing() *Tracing { return &Tracing{ Trxy: make(map[int][3]int) }}
-type Tracing struct {
-	Trxy map[int][3]int
-	sync.Mutex
-}
 
 type State struct {
 	Trace [3]*Tracing
@@ -28,7 +23,7 @@ type State struct {
 }
 
 func (c *Character) Init_State() *State {
-	var buffer State
+	var buffer State // race-4 race-7
 	c.Lock()
 	buffer.Current = c
 	buffer.Effects = make(map[int]*primitives.Effect)
@@ -42,7 +37,9 @@ func (c *Character) Init_State() *State {
 	// buffer.Writing.Life = *(base.MakeLife())
 	// buffer.Writing.Life.Rate = 0
 	for bucket := 0 ; bucket < 3 ; bucket++ {
-		buffer.Trace[bucket] = Init_Tracing()
+		trace := Init_Tracing() 
+		trace.Wipe()
+		buffer.Trace[bucket] = trace
 	}
 	return &buffer
 }

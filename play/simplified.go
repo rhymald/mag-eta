@@ -44,7 +44,9 @@ func (c *Character) Simplify(path [5][2]int) Simplified {
 	// }
 	body := (*c.Base).Body
 	buffer.PWR = functions.CeilRound(body.Mean() * 1000)
+	(*c).Base.Lock() ; (*c).Atts.Lock()
 	buffer.ID = functions.GetID((*c.Base).ID, (*c.Atts).ID)
+	(*c).Base.Unlock() ; (*c).Atts.Unlock()
 	// buffer.TS = make(map[string]int) // (*c).ID
 	// buffer.TS["Born"] = (*c).TSBorn
 	// buffer.TS["Atts"] = (*c).TSAtts

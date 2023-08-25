@@ -29,7 +29,7 @@ func Init_API(ipAddr string) {
 func jsonLoggerMiddleware() gin.HandlerFunc {
 	return gin.LoggerWithFormatter(
 		func(params gin.LogFormatterParams) string {
-			// if params.StatusCode == 200 && params.Path == "/" { return "" }
+			if params.StatusCode == 200 && params.Path == "/" { return "" }
 			log := LogEvent{
 				Status:  params.StatusCode,
 				Latency: fmt.Sprintf("%0.3fms", float64(params.Latency.Microseconds())/1000),

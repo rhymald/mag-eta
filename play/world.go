@@ -17,13 +17,6 @@ type World struct {
 	sync.Mutex
 }
 
-type ByIDList struct {
-	List map[string]*State
-	sync.Mutex
-}
-
-func Init_ByIDList() *ByIDList { return &ByIDList{ List: make(map[string]*State) } }
-
 func Init_World() *World {
 	var buffer World
 	buffer.ByID = Init_ByIDList()
@@ -48,11 +41,13 @@ func (w *World) WhichGrid() (*Grid, *Grid) {
 }
 
 func (w *World) Login(st *State) string {
-	w.ByID.Lock()
+	// w.ByID.Lock()
+	(*st.Current).Base.Lock() ; (*st.Current).Atts.Lock()
 	id := functions.GetID((*st.Current.Base).ID, (*st.Current.Atts).ID)
-	if _, ok := w.ByID.List[id] ; ok { w.ByID.Unlock() ; return "ERROR:AlreadyLoggedIn" } 
-	w.ByID.List[id] = st
-	w.ByID.Unlock()
+	(*st.Current).Base.Unlock() ; (*st.Current).Atts.Unlock()
+	if _, ok := (*w).ByID.Read(id) ; ok { return "ERROR:AlreadyLoggedIn" } 
+	(*w).ByID.Add(id, st) // race-3 race-8
+	// w.ByID.Unlock()
 	return id
 }
 

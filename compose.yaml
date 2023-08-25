@@ -7,7 +7,7 @@ services:
   # image: rhymald/mag:latest
     ports:
       - 4917:4917
-      - 9093:9093
+      # - 9093:9093
     environment:
       - GIN_MODE=release
       - CACHEDB_WRITER_URL=postgresql://root@cockroachdb:26257/grid?sslmode=disable
@@ -19,18 +19,18 @@ services:
         reservations:
           # cpus: '0.5'
           memory: 6144M
-    links:
-      - cockroachdb
+    # links:
+      # - cockroachdb
       # - otel-collector
-    depends_on:
-      - cockroachdb
+    # depends_on:
+      # - cockroachdb
 
-  cockroachdb:
-    image: cockroachdb/cockroach:latest
-    command: start-single-node --http-addr=0.0.0.0:8080 --insecure
-    ports: 
-      - 8080:8080
-      - 26257:26257
+  # cockroachdb:
+  #   image: cockroachdb/cockroach:latest
+  #   command: start-single-node --http-addr=0.0.0.0:8080 --insecure
+  #   ports: 
+  #     - 8080:8080
+  #     - 26257:26257
     # environment: 
     #   - COCKROACH_DATABASE=grid
     #   - COCKROACH_USER=rhymald

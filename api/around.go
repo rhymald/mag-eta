@@ -14,17 +14,18 @@ func around(c *gin.Context) {
 	takenID, myPlayer := "", &play.State{}
 	if _, ok := c.Request.Header["myplayerid"] ; ok { takenID = c.GetHeader("myplayerid") } else { takenID = c.Param("myplayerid") }
 	theWorld.ByID.Lock()
-	read := (*theWorld.ByID).List
+	read := (*theWorld).ByID
 	theWorld.ByID.Unlock()
-	if _, ok := read[takenID] ; ok { myPlayer = read[takenID] } else { myPlayer = nil }
+	myPlayer, _ = read.Read(takenID) //; ok { myPlayer, _ = read.Read(takenID) } else { myPlayer = nil }
 	first := [2]int{}
-	objectLimit += functions.CeilRound( math.Sqrt( float64(len(read))+1 ))
+	objectLimit += functions.CeilRound( math.Sqrt( float64(read.Len())+1 ))
 	if myPlayer != nil { 
 		path := myPlayer.Path() ; first = path[1]
 		buffer = append(buffer, myPlayer.Current.Simplify( path )) 
 	}
 	counter := 0
-	for id, each := range read {
+	allstates := read.GetAll()
+	for id, each := range allstates { // race-3 race-8
 		path := each.Path()
 		beyond := functions.Vector( float64(path[1][0]-first[0]), float64(path[1][1]-first[1]) ) > distanceLimit
 		if id == takenID || counter >= objectLimit || beyond { continue }

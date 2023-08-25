@@ -18,12 +18,14 @@ type Attributes struct {
 	ID int
 	Vitality float64
 	Capacity float64
+	sync.Mutex
 }
 
 type BasicStats struct {
 	ID int
 	Body *primitives.Stream
 	Energy []*primitives.Stream
+	sync.Mutex
 }
 
 func Init_BasicStats() *BasicStats {
