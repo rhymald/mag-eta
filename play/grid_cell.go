@@ -27,9 +27,9 @@ func (c *Cell) PUT(t int, id string) {
 
 func (c *Cell) GET(t int) map[string]int {
 	c.Lock()
-	if _, ok := (*c).TID[t] ; !ok { c.Unlock() ; return make(map[string]int) }
-	buffer := (*c).TID[t]
+	buffer, ok := (*c).TID[t] 
 	c.Unlock()
+	if  !ok { return make(map[string]int) }
 	list := buffer.Read()
 	return list
 }

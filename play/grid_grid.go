@@ -3,6 +3,7 @@ package play
 import (
 	"sync"
 	"rhymald/mag-eta/balance/functions"
+	"fmt"
 	"math"
 )
 
@@ -67,7 +68,30 @@ func (gr *Grid) Put_ID_to_XYT(id string, x, y, t int) {
 
 func (gr *Grid) Get_Square(x, y, r int) map[string][4]int {
 	buffer := make(map[string][4]int) // id: x, y, t, ts
+	// reader, writer := theWorld.WhichGrid()
+	targetT := functions.TAxis()
+	// var buffer Testing_Response
+	// buffer.PosR[0], buffer.PosR[1] = reader.Get_CentralPos()
+	// buffer.PosW[0], buffer.PosW[1] = writer.Get_CentralPos()
+	gr.Lock()
+	xr := gr.X.Get(x, r, targetT)
+	yr := gr.Y.Get(y, r, targetT)
+	gr.Unlock()
+	// writer.Lock()
+	// xw := writer.X.Get(x, r, targetT)
+	// yw := writer.Y.Get(y, r, targetT)
+	// writer.Unlock()
+	for id, _ := range xr { 
+		fmt.Println(">>> X:", xr[id], ">>> Y:", yr[id]) 
+		buffer[id] = [4]int{ xr[id][1], yr[id][1], xr[id][0], xr[id][2] }
+	}
+	fmt.Println("       ^^^ X ; Y vvv")
+	for id, _ := range yr { 
+		fmt.Println(">>> X:", xr[id], ">>> Y:", yr[id]) 
+		// buffer[id] = [4]int{ xr[id][1], yr[id][1], xr[id][0], xr[id][2] }
+	}
 	return buffer
 }
 // + Get_Round
 // + Get_Sector
+

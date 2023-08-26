@@ -117,6 +117,7 @@ func (st *State) Path() [5][2]int {
 	// 	idx := len(buffer)-1-i
 	// 	if idx >= 0 { tIndex = append(tIndex, buffer[idx]) }
 	// }
+	if len(tIndex) == 0 { return [5][2]int{} }
 	if len(tIndex) == 1 { 
 		return [5][2]int{
 			[2]int{ tIndex[0][1], 0 },

@@ -23,33 +23,26 @@ func (a *Axis) Put(t, pos int, id string) {
 
 func (a *Axis) Get(start, within, when int) map[string][3]int {
 	a.Lock()
+	buffer := make(map[string][3]int) // id: t, a, ts
 	read := (*a).Idx
 	a.Unlock()
-	buffer := make(map[string][3]int) // id: t, a, ts
-	for i := 0; i < within/2; i++ {
-		pos, neg := start-i, start+1
-		for moment := when-1 ; moment < when+2 ; moment++ {
-			if _, ok := read[pos]; !ok { continue } else {
-				cell := read[pos].GET(moment) // race-1
-				for id, ts := range cell {
-					checkTS := [3]int{}
-					if _, ok := buffer[id] ; ok { checkTS = buffer[id] }
-					if checkTS[2] > ts { continue } else {
-						buffer[id] = [3]int{ moment, pos, ts }
-					}
+ByPositionOnAxis:
+	for pos:=start-within/2 ; pos<=start+within/2 ; pos++ {
+		cell, ok := read[pos] ; if !ok { continue ByPositionOnAxis }
+	ByTimeAxis:
+		for t:=when-4 ; t<=when+1 ; t++ {
+			cellTcontent := cell.GET(t)
+			if len(cellTcontent) == 0 { continue ByTimeAxis }
+		ByWriteTimeStamp:
+			for id, ts := range cellTcontent {
+				compare, ook := buffer[id]
+				if !ook {
+					buffer[id] = [3]int{ t, pos, ts }
+				} else {
+					if compare[2] < ts { buffer[id] = [3]int{ t, pos, ts } } else { continue ByWriteTimeStamp }
 				}
-			}
-			if _, ok := read[neg]; !ok { continue } else {
-				cell := read[neg].GET(moment)
-				for id, ts := range cell {
-					checkTS := [3]int{}
-					if _, ok := buffer[id] ; ok { checkTS = buffer[id] }
-					if checkTS[2] > ts { continue } else {
-						buffer[id] = [3]int{ moment, neg, ts }
-					}
-				}
-			}
-		}
-	}
+			} // end ByWriteTimeStamp
+		} // end ByTimeAxis
+	} // end ByPositionOnAxis
 	return buffer
 }
