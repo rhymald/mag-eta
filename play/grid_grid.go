@@ -3,7 +3,7 @@ package play
 import (
 	"sync"
 	"rhymald/mag-eta/balance/functions"
-	"fmt"
+	// "fmt"
 	"math"
 )
 
@@ -82,14 +82,14 @@ func (gr *Grid) Get_Square(x, y, r int) map[string][4]int {
 	// yw := writer.Y.Get(y, r, targetT)
 	// writer.Unlock()
 	for id, _ := range xr { 
-		fmt.Println(">>> X:", xr[id], ">>> Y:", yr[id]) 
+		// fmt.Println(">>> X:", xr[id], ">>> Y:", yr[id]) 
 		buffer[id] = [4]int{ xr[id][1], yr[id][1], xr[id][0], xr[id][2] }
 	}
-	fmt.Println("       ^^^ X ; Y vvv")
-	for id, _ := range yr { 
-		fmt.Println(">>> X:", xr[id], ">>> Y:", yr[id]) 
-		// buffer[id] = [4]int{ xr[id][1], yr[id][1], xr[id][0], xr[id][2] }
-	}
+	// fmt.Println("       ^^^ X ; Y vvv")
+	// for id, _ := range yr { 
+	// 	fmt.Println(">>> X:", xr[id], ">>> Y:", yr[id]) 
+	// 	// buffer[id] = [4]int{ xr[id][1], yr[id][1], xr[id][0], xr[id][2] }
+	// }
 	return buffer
 }
 // + Get_Round

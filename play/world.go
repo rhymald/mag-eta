@@ -3,6 +3,7 @@ package play
 import (
 	"rhymald/mag-eta/balance/functions"
 	"sync"
+	"fmt"
 )
 
 type World struct {
@@ -55,9 +56,38 @@ func (w *World) GridWriter_ByPush() {
 	writeToCache := (*w).Queue.Chan
 	for {
 		input := <- writeToCache // just a black hole
-		for id, posList := range input { for _, pos := range posList {
-			_, writer := w.WhichGrid()
-			writer.Put_ID_to_XYT(id, pos[1], pos[2], pos[0])
-		}}
+		for id, posList := range input { 
+			start := functions.EpochNS()
+			for _, pos := range posList {
+				_, writer := w.WhichGrid()
+				writer.Put_ID_to_XYT(id, pos[1], pos[2], pos[0])
+			}
+			list := w.Seek_Square( posList[len(posList)-1][1], posList[len(posList)-1][2], 1400 )
+			if len(list) > 1 { 
+				fmt.Printf(" ==> RW time: %0.3fms\n", (float64(start)-float64(functions.EpochNS()))/1000000 )
+				fmt.Println("    ", list) 
+			}
+		}
 	}
+}
+
+func (w *World) Seek_Square(x, y, r int) []string {
+	reader, writer := w.WhichGrid()
+	buffer := writer.Get_Square(x, y, r)
+	old := reader.Get_Square(x, y, r)
+	for id, row := range old { if _, ok := buffer[id] ; !ok { 
+		row[2] += -functions.TRange
+		buffer[id] = row
+	}}
+	list := []string{}
+	states := (*w).ByID.GetAll()
+	for t:=functions.TRange-1 ; t>=-functions.TRange ; t-- { for id, row := range buffer {
+		player, ok := states[id]
+		path := player.Path()
+		actual := row[0] == path[1][0] && row[1] == path[1][1] && ok
+		if row[2] == t && actual {
+			list = append(list, fmt.Sprintf("id = %s, x = %6d, y = %6d, t = %3d, old = %6dms", id, row[0], row[1], row[2], row[3]))
+		}
+	}}
+	return list
 }

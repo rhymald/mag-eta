@@ -1,0 +1,28 @@
+package api 
+
+import (
+	"github.com/gin-gonic/gin"
+	"rhymald/mag-eta/play"
+	"strconv"
+)
+
+func move(c *gin.Context) {
+	takenID, direction, myPlayer := "", "", &play.State{}
+	if _, ok := c.Request.Header["myplayerid"] ; ok { takenID = c.GetHeader("myplayerid") } else { takenID = c.Param("myplayerid") }
+	if _, ok := c.Request.Header["direction"] ; ok { direction = c.GetHeader("direction") } else { direction = c.Param("direction") }
+	if direction != "" && takenID != "" {
+		where, err := strconv.Atoi(direction)
+		theWorld.ByID.Lock()
+		read := (*theWorld).ByID
+		theWorld.ByID.Unlock()
+		myPlayer, _ = read.Read(takenID) //; ok { myPlayer, _ = read.Read(takenID) } else { myPlayer = nil }
+		if myPlayer != nil && err != nil {
+			myPlayer.Move( float64(where)/1000, true, theWorld.Queue.Chan )
+			c.IndentedJSON(200, "Moved")
+		} else {
+			c.IndentedJSON(400, []string{ "Bad request headers:", "- myplayerid parsed:", takenID, "- direction parsed:", direction })
+		}
+	} else {
+		c.IndentedJSON(400, []string{ "Bad request headers:", "- myplayerid read:", takenID, "- direction read:", direction })
+	}
+}

@@ -23,6 +23,7 @@ func Init_API(ipAddr string) {
 	router.GET("/:myplayerid", around)
 	router.GET("/login", login)
 	router.GET("/test/world", testWorld)
+	router.GET("/test/spawn", spawn)
 	router.Run(ipAddr)
 }
 
