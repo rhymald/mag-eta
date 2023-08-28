@@ -24,6 +24,8 @@ func Init_API(ipAddr string) {
 	router.GET("/login", login)
 	router.GET("/test/world", testWorld)
 	router.GET("/test/spawn", spawn)
+	router.GET("/move/:myplayerid/:direction", move)
+	fmt.Println(" >>>>>      Hello, artifical world!      <<<<<")
 	router.Run(ipAddr)
 }
 

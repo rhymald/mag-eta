@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	TAxisStep = 64 //ms for grid
-	TRange = 64 //steps per bucket
+	TAxisStep = 400 //ms for grid
+	TRange = 1250 //steps per bucket
 	LifeCycleQueuePause = 1618
 )
 
