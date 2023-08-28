@@ -64,7 +64,7 @@ func (w *World) GridWriter_ByPush() {
 			}
 			list := w.Seek_Square( posList[len(posList)-1][1], posList[len(posList)-1][2], 1400 )
 			if len(list) > 1 { 
-				fmt.Printf(" ==> RW time: %0.3fms\n", (float64(start)-float64(functions.EpochNS()))/1000000 )
+				fmt.Printf(" ==> RW time: %0.3fms\n", -(float64(start)+float64(functions.EpochNS()))/1000000 )
 				fmt.Println("    ", list) 
 			}
 		}

@@ -45,8 +45,8 @@ func (st *State) Move(rotate float64, step bool, writeToCache chan map[string][]
 		add := [4]int{ // race-6
 			now,
 			functions.ChancedRound( 2000*functions.Rand()-1000 )/250*250, 
-			functions.ChancedRound( 2000000*functions.Rand()-1000000 ), 
-			functions.ChancedRound( 2000000*functions.Rand()-1000000 ),
+			functions.ChancedRound( 20000*functions.Rand()-10000 ), 
+			functions.ChancedRound( 20000*functions.Rand()-10000 ),
 		}
 		renew = append(renew, add)
 		(*write).Trxy = renew
