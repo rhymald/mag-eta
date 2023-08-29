@@ -1,7 +1,8 @@
-package play
+package world
 
 import (
 	"rhymald/mag-eta/balance/functions"
+	"rhymald/mag-eta/play/character"
 	"sync"
 	"fmt"
 )
@@ -41,7 +42,7 @@ func (w *World) WhichGrid() (*Grid, *Grid) {
 	return read, write
 }
 
-func (w *World) Login(st *State) string {
+func (w *World) Login(st *character.State) string {
 	// w.ByID.Lock()
 	(*st.Current).Base.Lock() ; (*st.Current).Atts.Lock()
 	id := functions.GetID((*st.Current.Base).ID, (*st.Current.Atts).ID)

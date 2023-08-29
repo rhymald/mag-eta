@@ -1,4 +1,4 @@
-package play 
+package character 
 
 import (
 	"rhymald/mag-eta/balance/functions"

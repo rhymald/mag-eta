@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"rhymald/mag-eta/play"
+	"rhymald/mag-eta/play/character"
 	"rhymald/mag-eta/balance/functions"
 	"math"
 )
@@ -10,8 +10,8 @@ import (
 func around(c *gin.Context) { 
 	distanceLimit := 10000.0
 	objectLimit := 5 + 1
-	var buffer []play.Simplified
-	takenID, myPlayer := "", &play.State{}
+	var buffer []character.Simplified
+	takenID, myPlayer := "", &character.State{}
 	if _, ok := c.Request.Header["myplayerid"] ; ok { takenID = c.GetHeader("myplayerid") } else { takenID = c.Param("myplayerid") }
 	theWorld.ByID.Lock()
 	read := (*theWorld).ByID

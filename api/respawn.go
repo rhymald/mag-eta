@@ -2,14 +2,15 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"rhymald/mag-eta/play"
+	"rhymald/mag-eta/play/character"
+	"rhymald/mag-eta/play/world"
 	"rhymald/mag-eta/balance/functions"
 )
 
-var theWorld = play.Init_World()
+var theWorld = world.Init_World()
 
 func login(c *gin.Context) { 
-	base := play.Init_BasicStats()
+	base := character.Init_BasicStats()
 	char := base.Init_Character()
 	char.Init_Attributes()
 	state := char.Init_State()
