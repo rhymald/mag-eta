@@ -3,7 +3,7 @@
 counter=0
 
 createObjects () {
-  while sleep 0.125; do 
+  while sleep 3.82; do 
     counter=$(( $counter+1 )) ;
     echo "Here: $counter" ;
     curl localhost:4917/test/spawn > /dev/null 2>&1 ; 

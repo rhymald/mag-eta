@@ -59,6 +59,6 @@ func spawn(c *gin.Context) {
 	go func(){ functions.Wait(600) ; state.Lifecycle_Regenerate() }()
 	direction := functions.Rand() - functions.Rand()
 	direction = direction / (math.Abs(direction))
-	go func(){ functions.Wait(4000) ; for { state.Move( direction*(1+2*functions.Rand())/24, true, theWorld.Queue.Chan ) }}()
+	go func(){ functions.Wait(4000) ; for { state.Move( direction/24, true, theWorld.Queue.Chan ) }}()
 	c.IndentedJSON(200, struct{ ID string ; Result string }{ ID: id, Result: "Successfully spawned" })
 }

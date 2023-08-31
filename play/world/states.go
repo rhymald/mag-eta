@@ -6,7 +6,6 @@ import(
 )
 
 type ByIDList struct {
-	// List map[string]*State
 	List [][2]interface{}
 	sync.Mutex
 }

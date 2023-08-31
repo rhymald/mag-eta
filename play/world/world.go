@@ -3,6 +3,7 @@ package world
 import (
 	"rhymald/mag-eta/balance/functions"
 	"rhymald/mag-eta/play/character"
+	"math"
 	"sync"
 	"fmt"
 )
@@ -26,7 +27,8 @@ func Init_World() *World {
 	buffer.Queue.Buffer = []map[string][][3]int{}
 	buffer.ID = functions.GetID( functions.StartEpoch/1000000, functions.StartEpoch%1000000 )
 	for i:=0 ; i<3 ; i++ {buffer.Grid[i] = Init_Grid(0, 0)}
-	go func(){ (&buffer).GridWriter_ByPush() }()
+	go func(){ (&buffer).GridWriter_FromBuffer() }()
+	go func(){ (&buffer).GridBuffer_ByPush() }()
 	return &buffer
 }
 
@@ -53,22 +55,55 @@ func (w *World) Login(st *character.State) string {
 	return id
 }
 
-func (w *World) GridWriter_ByPush() {
+func (w *World) GridBuffer_ByPush() {
+	// var wg sync.WaitGroup
 	writeToCache := (*w).Queue.Chan
-	for {
+	for { //for input := range writeToCache {
 		input := <- writeToCache // just a black hole
-		for id, posList := range input { 
+		(*w).Queue.Lock()
+		(*w).Queue.Buffer = append((*w).Queue.Buffer, input)
+		(*w).Queue.Unlock()
+		// for id, posList := range input { 
+		// 	wg.Add(1)
+		// 	start := functions.EpochNS()
+		// 	for _, pos := range posList {
+		// 		_, writer := w.WhichGrid()
+		// 		writer.Put_ID_to_XYT(id, pos[1], pos[2], pos[0])
+		// 	}
+		// 	list := w.Seek_Square( posList[len(posList)-1][1], posList[len(posList)-1][2], 1400 )
+		// 	if len(list) > 1 { 
+		// 		fmt.Printf(" ==> RW time: %0.3fms\n", -(float64(start)+float64(functions.EpochNS()))/1000000 )
+		// 		fmt.Println("    ", list) 
+		// 	}
+		// 	wg.Done()
+		// }
+		// wg.Wait()
+	}
+}
+func (w *World) GridWriter_FromBuffer() {
+	pause := float64(functions.TAxisStep) / math.Phi
+	for {
+		var wg sync.WaitGroup
+		(*w).Queue.Lock()
+		input := (*w).Queue.Buffer
+		(*w).Queue.Buffer = []map[string][][3]int{}
+		(*w).Queue.Unlock()
+		for _, each := range input { for id, posList := range each {
+			wg.Add(1)
 			start := functions.EpochNS()
 			for _, pos := range posList {
 				_, writer := w.WhichGrid()
 				writer.Put_ID_to_XYT(id, pos[1], pos[2], pos[0])
 			}
 			list := w.Seek_Square( posList[len(posList)-1][1], posList[len(posList)-1][2], 1400 )
-			if len(list) > 1 { 
-				fmt.Printf(" ==> RW time: %0.3fms\n", -(float64(start)+float64(functions.EpochNS()))/1000000 )
-				fmt.Println("    ", list) 
+			if len(list) >= 0 { 
+				fmt.Printf("\r ==> RW time: %0.3fms\t%d \r", (-float64(start)+float64(functions.EpochNS()))/1000000, len(list) )
+				// fmt.Println("    ", list) 
 			}
-		}
+			wg.Done()
+		}}
+		wg.Wait()
+		functions.Wait( pause )
 	}
 }
 
