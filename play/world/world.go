@@ -3,7 +3,7 @@ package world
 import (
 	"rhymald/mag-eta/balance/functions"
 	"rhymald/mag-eta/play/character"
-	"math"
+	// "math"
 	"sync"
 	"fmt"
 )
@@ -81,30 +81,35 @@ func (w *World) GridBuffer_ByPush() {
 	}
 }
 func (w *World) GridWriter_FromBuffer() {
-	pause := float64(functions.TAxisStep) / math.Phi
+	pause := 0.0// float64(functions.TAxisStep) / math.Phi
+	var wg sync.WaitGroup
 	for {
-		var wg sync.WaitGroup
 		(*w).Queue.Lock()
 		input := (*w).Queue.Buffer
+		if len(input) < 10 { (*w).Queue.Unlock() ; continue }
 		(*w).Queue.Buffer = []map[string][][3]int{}
 		(*w).Queue.Unlock()
-		for _, each := range input { for id, posList := range each {
-			wg.Add(1)
-			start := functions.EpochNS()
-			for _, pos := range posList {
-				_, writer := w.WhichGrid()
-				writer.Put_ID_to_XYT(id, pos[1], pos[2], pos[0])
-			}
-			list := w.Seek_Square( posList[len(posList)-1][1], posList[len(posList)-1][2], 1400 )
-			if len(list) >= 0 { 
-				fmt.Printf("\r ==> RW time: %0.3fms\t%d \r", (-float64(start)+float64(functions.EpochNS()))/1000000, len(list) )
-				// fmt.Println("    ", list) 
-			}
+		wg.Add(1)
+		go func(wg *sync.WaitGroup){
+			counterT, found, avgT, meanT := 0, 0, 0.0, 0.0
+			for _, each := range input { for id, posList := range each {
+				start := functions.EpochNS()
+				for _, pos := range posList {
+					_, writer := w.WhichGrid()
+					writer.Put_ID_to_XYT(id, pos[1], pos[2], pos[0])
+				}
+				avgT += float64(functions.EpochNS())/1000000-float64(start)/1000000
+				counterT++
+				meanT += 1000000/float64(functions.EpochNS()-start)
+				list := w.Seek_Square( posList[len(posList)-1][1], posList[len(posList)-1][2], 1400 )
+				found = len(list)
+			}}
+			if counterT != 0 {fmt.Printf("\r                 ==> RW time[%d/%d]:\tmean=%0.3fms\tavg=%0.3fms\ttotal=%0.3fms \r", found, counterT, float64(counterT)/meanT, avgT/float64(counterT), avgT )}
 			wg.Done()
-		}}
-		wg.Wait()
+		}(&wg)
 		functions.Wait( pause )
 	}
+	wg.Wait()
 }
 
 func (w *World) Seek_Square(x, y, r int) []string {

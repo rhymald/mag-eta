@@ -22,6 +22,8 @@ type Grid struct {
 	sync.Mutex
 }
 
+var xyStep = functions.XYAxisStep
+
 func Init_Grid(x, y int) *Grid {
 	var buffer Grid
 	buffer.X = Init_Axis()
@@ -46,7 +48,7 @@ func (gr *Grid) Get_CentralPos() (int, int) {
 
 func (gr *Grid) Put_ID_to_XYT(id string, x, y, t int) {
 	// xc, yc := gr.Get_CentralPos()
-	// x += -xc ; y += -yc
+	x = x/xyStep ; y = y/xyStep
 	r := functions.Round( math.Sqrt( float64(x*x + y*y) ))
 	v := functions.Round( math.Atan( float64(y)/float64(x) ) / math.Pi * 1000 ) 
 	gr.Lock()
@@ -74,8 +76,8 @@ func (gr *Grid) Get_Square(x, y, r int) map[string][4]int {
 	// buffer.PosR[0], buffer.PosR[1] = reader.Get_CentralPos()
 	// buffer.PosW[0], buffer.PosW[1] = writer.Get_CentralPos()
 	gr.Lock()
-	xr := gr.X.Get(x, r, targetT)
-	yr := gr.Y.Get(y, r, targetT)
+	xr := gr.X.Get(x/xyStep, r/xyStep, targetT)
+	yr := gr.Y.Get(y/xyStep, r/xyStep, targetT)
 	gr.Unlock()
 	// writer.Lock()
 	// xw := writer.X.Get(x, r, targetT)
@@ -83,7 +85,7 @@ func (gr *Grid) Get_Square(x, y, r int) map[string][4]int {
 	// writer.Unlock()
 	for id, _ := range xr { 
 		// fmt.Println(">>> X:", xr[id], ">>> Y:", yr[id]) 
-		buffer[id] = [4]int{ xr[id][1], yr[id][1], xr[id][0], xr[id][2] }
+		buffer[id] = [4]int{ xr[id][1]*xyStep, yr[id][1]*xyStep, xr[id][0], xr[id][2] }
 	}
 	// fmt.Println("       ^^^ X ; Y vvv")
 	// for id, _ := range yr { 
