@@ -5,7 +5,7 @@ import (
 	"rhymald/mag-eta/play/character"
 	// "math"
 	"sync"
-	"fmt"
+	// "fmt"
 )
 
 type World struct {
@@ -15,7 +15,7 @@ type World struct {
 		Buffer []map[string][][3]int
 		sync.Mutex
 	}
-	Grid [3]*Grid
+	// Grid [3]*Grid
 	ByID *ByIDList
 	sync.Mutex
 }
@@ -26,23 +26,23 @@ func Init_World() *World {
 	buffer.Queue.Chan = make(chan map[string][][3]int)
 	buffer.Queue.Buffer = []map[string][][3]int{}
 	buffer.ID = functions.GetID( functions.StartEpoch/1000000, functions.StartEpoch%1000000 )
-	for i:=0 ; i<3 ; i++ {buffer.Grid[i] = Init_Grid(0, 0)}
-	go func(){ (&buffer).GridWriter_FromBuffer() }()
+	// for i:=0 ; i<3 ; i++ {buffer.Grid[i] = Init_Grid(0, 0)}
+	// go func(){ (&buffer).GridWriter_FromBuffer() }()
 	go func(){ (&buffer).GridBuffer_ByPush() }()
 	return &buffer
 }
 
-func (w *World) WhichGrid() (*Grid, *Grid) {
-	tAxisStep, tRange := functions.TAxisStep, functions.TRange
-	epoch := functions.Epoch()
-	even := (epoch/(tRange*tAxisStep))%3
-	w.Lock()
-	read, write := (*w).Grid[(even+2)%3], (*w).Grid[(even+3)%3] 
-	x, y := write.Get_CentralPos()
-	(*w).Grid[(even+1)%3] = Init_Grid( x, y )
-	w.Unlock()
-	return read, write
-}
+// func (w *World) WhichGrid() (*Grid, *Grid) {
+// 	tAxisStep, tRange := functions.TAxisStep, functions.TRange
+// 	epoch := functions.Epoch()
+// 	even := (epoch/(tRange*tAxisStep))%3
+// 	w.Lock()
+// 	read, write := (*w).Grid[(even+2)%3], (*w).Grid[(even+3)%3] 
+// 	x, y := write.Get_CentralPos()
+// 	// (*w).Grid[(even+1)%3] = Init_Grid( x, y )
+// 	w.Unlock()
+// 	return read, write
+// }
 
 func (w *World) Login(st *character.State) string {
 	// w.ByID.Lock()
@@ -80,55 +80,55 @@ func (w *World) GridBuffer_ByPush() {
 		// wg.Wait()
 	}
 }
-func (w *World) GridWriter_FromBuffer() {
-	pause := 0.0// float64(functions.TAxisStep) / math.Phi
-	var wg sync.WaitGroup
-	for {
-		(*w).Queue.Lock()
-		input := (*w).Queue.Buffer
-		if len(input) < 10 { (*w).Queue.Unlock() ; continue }
-		(*w).Queue.Buffer = []map[string][][3]int{}
-		(*w).Queue.Unlock()
-		wg.Add(1)
-		go func(wg *sync.WaitGroup){
-			counterT, found, avgT, meanT := 0, 0, 0.0, 0.0
-			for _, each := range input { for id, posList := range each {
-				start := functions.EpochNS()
-				for _, pos := range posList {
-					_, writer := w.WhichGrid()
-					writer.Put_ID_to_XYT(id, pos[1], pos[2], pos[0])
-				}
-				avgT += float64(functions.EpochNS())/1000000-float64(start)/1000000
-				counterT++
-				meanT += 1000000/float64(functions.EpochNS()-start)
-				list := w.Seek_Square( posList[len(posList)-1][1], posList[len(posList)-1][2], 1400 )
-				found = len(list)
-			}}
-			if counterT != 0 {fmt.Printf("\r                 ==> RW time[%d/%d]:\tmean=%0.3fms\tavg=%0.3fms\ttotal=%0.3fms \r", found, counterT, float64(counterT)/meanT, avgT/float64(counterT), avgT )}
-			wg.Done()
-		}(&wg)
-		functions.Wait( pause )
-	}
-	wg.Wait()
-}
+// func (w *World) GridWriter_FromBuffer() {
+// 	pause := 0.0// float64(functions.TAxisStep) / math.Phi
+// 	var wg sync.WaitGroup
+// 	for {
+// 		(*w).Queue.Lock()
+// 		input := (*w).Queue.Buffer
+// 		if len(input) < 10 { (*w).Queue.Unlock() ; continue }
+// 		(*w).Queue.Buffer = []map[string][][3]int{}
+// 		(*w).Queue.Unlock()
+// 		wg.Add(1)
+// 		go func(wg *sync.WaitGroup){
+// 			counterT, found, avgT, meanT := 0, 0, 0.0, 0.0
+// 			for _, each := range input { for id, posList := range each {
+// 				start := functions.EpochNS()
+// 				for _, pos := range posList {
+// 					_, writer := w.WhichGrid()
+// 					writer.Put_ID_to_XYT(id, pos[1], pos[2], pos[0])
+// 				}
+// 				avgT += float64(functions.EpochNS())/1000000-float64(start)/1000000
+// 				counterT++
+// 				meanT += 1000000/float64(functions.EpochNS()-start)
+// 				list := w.Seek_Square( posList[len(posList)-1][1], posList[len(posList)-1][2], 1400 )
+// 				found = len(list)
+// 			}}
+// 			if counterT != 0 {fmt.Printf("\r                 ==> RW time[%d/%d]:\tmean=%0.3fms\tavg=%0.3fms\ttotal=%0.3fms \r", found, counterT, float64(counterT)/meanT, avgT/float64(counterT), avgT )}
+// 			wg.Done()
+// 		}(&wg)
+// 		functions.Wait( pause )
+// 	}
+// 	wg.Wait()
+// }
 
-func (w *World) Seek_Square(x, y, r int) []string {
-	reader, writer := w.WhichGrid()
-	buffer := writer.Get_Square(x, y, r)
-	old := reader.Get_Square(x, y, r)
-	for id, row := range old { if _, ok := buffer[id] ; !ok { 
-		row[2] += -functions.TRange
-		buffer[id] = row
-	}}
-	list := []string{}
-	states := (*w).ByID.GetAll()
-	for t:=functions.TRange-1 ; t>=-functions.TRange ; t-- { for id, row := range buffer {
-		player, ok := states[id]
-		path := player.Path()
-		actual := row[0] == path[1][0] && row[1] == path[1][1] && ok
-		if row[2] == t && actual {
-			list = append(list, fmt.Sprintf("id = %s, x = %6d, y = %6d, t = %3d, old = %6dms", id, row[0], row[1], row[2], row[3]))
-		}
-	}}
-	return list
-}
+// func (w *World) Seek_Square(x, y, r int) []string {
+// 	reader, writer := w.WhichGrid()
+// 	buffer := writer.Get_Square(x, y, r)
+// 	old := reader.Get_Square(x, y, r)
+// 	for id, row := range old { if _, ok := buffer[id] ; !ok { 
+// 		row[2] += -functions.TRange
+// 		buffer[id] = row
+// 	}}
+// 	list := []string{}
+// 	states := (*w).ByID.GetAll()
+// 	for t:=functions.TRange-1 ; t>=-functions.TRange ; t-- { for id, row := range buffer {
+// 		player, ok := states[id]
+// 		path := player.Path()
+// 		actual := row[0] == path[1][0] && row[1] == path[1][1] && ok
+// 		if row[2] == t && actual {
+// 			list = append(list, fmt.Sprintf("id = %s, x = %6d, y = %6d, t = %3d, old = %6dms", id, row[0], row[1], row[2], row[3]))
+// 		}
+// 	}}
+// 	return list
+// }

@@ -18,7 +18,7 @@ type Testing_Response struct {
 }
 
 func testWorld(c *gin.Context) {
-	list := theWorld.Seek_Square(0, 0, 1414)
+	// list := theWorld.Seek_Square(0, 0, 1414)
 	// reader, writer := theWorld.WhichGrid()
 	// buffer := writer.Get_Square(0, 0, 1414)
 	// old := reader.Get_Square(0, 0, 1414)
@@ -46,7 +46,7 @@ func testWorld(c *gin.Context) {
 	// buffer.Xw = writer.X.Get(targetX, targetAOE, targetT)
 	// buffer.Yw = writer.Y.Get(targetY, targetAOE, targetT)
 	// writer.Unlock()
-	c.IndentedJSON(200, list)
+	c.IndentedJSON(200, "list")
 }
 
 func spawn(c *gin.Context) { 
