@@ -10,12 +10,14 @@ import (
 
 type World struct {
 	ID string
+	Grid *Grid
 	Queue struct {
-		Chan chan map[string][][3]int
-		Buffer []map[string][][3]int
+		Chan chan map[string][2]int
+		Buffer []map[string][2]int
 		sync.Mutex
+		Size int
+		Timeout int
 	}
-	// Grid [3]*Grid
 	ByID *ByIDList
 	sync.Mutex
 }
@@ -23,9 +25,12 @@ type World struct {
 func Init_World() *World {
 	var buffer World
 	buffer.ByID = Init_ByIDList()
-	buffer.Queue.Chan = make(chan map[string][][3]int)
-	buffer.Queue.Buffer = []map[string][][3]int{}
-	buffer.ID = functions.GetID( functions.StartEpoch/1000000, functions.StartEpoch%1000000 )
+	buffer.Queue.Chan = make(chan map[string][2]int)
+	buffer.Queue.Buffer = []map[string][2]int{}
+	buffer.Queue.Size = 2 * functions.TRange * 618 / 1000
+	buffer.Queue.Timeout = functions.TAxisStep * 618 / 1000
+	buffer.ID = functions.GetID( functions.StartEpoch/3600000000, functions.StartEpoch%3600000000 )
+	buffer.Grid = Init_Grid(buffer.ID)
 	// for i:=0 ; i<3 ; i++ {buffer.Grid[i] = Init_Grid(0, 0)}
 	// go func(){ (&buffer).GridWriter_FromBuffer() }()
 	go func(){ (&buffer).GridBuffer_ByPush() }()
@@ -57,12 +62,25 @@ func (w *World) Login(st *character.State) string {
 
 func (w *World) GridBuffer_ByPush() {
 	// var wg sync.WaitGroup
+	timer := 0 
 	writeToCache := (*w).Queue.Chan
 	for { //for input := range writeToCache {
 		input := <- writeToCache // just a black hole
 		(*w).Queue.Lock()
 		(*w).Queue.Buffer = append((*w).Queue.Buffer, input)
+		triggered := functions.Epoch() - timer >= (*w).Queue.Timeout
+		bufferSize := len((*w).Queue.Buffer) 
+		triggered = triggered || bufferSize >= (*w).Queue.Size
 		(*w).Queue.Unlock()
+		if triggered {
+			timer = functions.Epoch()
+			(*w).Queue.Lock()
+			buffer := (*w).Queue.Buffer
+			(*w).Queue.Buffer = []map[string][2]int{}
+			(*w).Queue.Unlock()
+			for _, each := range buffer { (*w).Grid.Nonce(each) }
+			// fmt.Println("Written:", buffer)
+		}
 		// for id, posList := range input { 
 		// 	wg.Add(1)
 		// 	start := functions.EpochNS()

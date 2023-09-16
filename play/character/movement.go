@@ -27,7 +27,7 @@ func (st *State) WhichTrace() (*Tracing, *Tracing, int) {
 	return read, write, epoch
 }
 
-func (st *State) Move(rotate float64, step bool, writeToCache chan map[string][][3]int) {
+func (st *State) Move(rotate float64, step bool, writeToCache chan map[string][2]int) {
 	tAxisStep, tRange := functions.TAxisStep, functions.TRange
 	// epoch := functions.Epoch()
 	// (*st).Trace[0].Lock() ; (*st).Trace[1].Lock() ; (*st).Trace[2].Lock()
@@ -76,16 +76,14 @@ func (st *State) Move(rotate float64, step bool, writeToCache chan map[string][]
 		newstep[2] = functions.Round(float64(latestStep[2]) + 1000*distance*math.Sin(turn))
 		newstep[3] = functions.Round(float64(latestStep[3]) + 1000*distance*math.Cos(turn))
 	}
-	toWrite := make(map[string][][3]int) // id: t, x, y
-	for ts := latest ; ts < now ; ts++ { 
-		toWrite[id] = append(toWrite[id], [3]int{ts, latestStep[2], latestStep[3]})
-	}
 	write.Lock()
 	rewrite := (*write).Trxy
 	rewrite = append(rewrite, newstep) // race-2 race-6
 	(*write).Trxy = rewrite
 	write.Unlock()
-	toWrite[id] = append(toWrite[id], [3]int{now, newstep[2], newstep[3]})
+	// toWrite[id] = append(toWrite[id], [3]int{now, newstep[2], newstep[3]})
+	toWrite := make(map[string][2]int) // id: x, y
+	toWrite[id] = [2]int{latestStep[2], latestStep[3]}
 	writeToCache <- toWrite
 	functions.Wait(float64(tAxisStep)*math.Pi)// / math.Log2(dTrace[1]ance+1)) // 1.536 - 0.256
 }

@@ -1,0 +1,17 @@
+package world
+
+import (
+	"sync"
+)
+
+type Row struct {
+	List map[string][2]int
+	sync.Mutex
+}
+
+func Init_Row(wID string) *Row { 
+	var buffer Row
+	buffer.List = make(map[string][2]int)
+	buffer.List[wID] = [2]int{0, 0}
+	return &buffer
+} 

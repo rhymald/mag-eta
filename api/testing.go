@@ -8,14 +8,14 @@ import (
 	// "fmt"
 )
 
-type Testing_Response struct {
-	PosW [2]int
-	Xw map[string][3]int
-	Yw map[string][3]int
-	PosR [2]int
-	Xr map[string][3]int
-	Yr map[string][3]int
-}
+// type Testing_Response struct {
+// 	PosW [2]int
+// 	Xw map[string][3]int
+// 	Yw map[string][3]int
+// 	PosR [2]int
+// 	Xr map[string][3]int
+// 	Yr map[string][3]int
+// }
 
 func testWorld(c *gin.Context) {
 	// list := theWorld.Seek_Square(0, 0, 1414)
@@ -46,7 +46,8 @@ func testWorld(c *gin.Context) {
 	// buffer.Xw = writer.X.Get(targetX, targetAOE, targetT)
 	// buffer.Yw = writer.Y.Get(targetY, targetAOE, targetT)
 	// writer.Unlock()
-	c.IndentedJSON(200, "list")
+	output := theWorld.Grid.GetAgainst(3)
+	c.IndentedJSON(200, output)
 }
 
 func spawn(c *gin.Context) { 

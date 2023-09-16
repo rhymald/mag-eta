@@ -1,0 +1,54 @@
+package world
+
+import (
+	"sync"
+)
+
+type Table struct {
+	List []string
+	Relations [][][2]int
+	sync.Mutex
+}
+
+func Init_Table(worldID string) *Table {
+	buffer := &Table{}
+	buffer.Lock()
+	(*buffer).List = append(buffer.List, worldID)
+	(*buffer).Relations = [][][2]int{ [][2]int{ [2]int{0, 0} } }
+	bufer.Unlock()
+	return buffer 
+}
+
+func (tab *Table) ListAll() map[string]int {
+	buffer := make(map[string]int)
+	tab.Lock()
+	read := (*tab).List
+	tab.Unlock()
+	for i, id := range read { buffer[id] = i }
+	return buffer
+}
+
+func (tab *Table) Update(ids []string) {
+	read := tab.ListAll()
+	for _, id := range ids { idx, ok := read[id] ; if ok {
+
+	} else {
+
+	}}
+}
+
+func (tab *Table) Write(i, j, x, y int) {
+	tab.Lock()
+	(*tab).Relations[i][j] = [2]int{x, y}
+	tab.Unlock()
+}
+
+// func (tab *Table) AppendI(ci, j, x, y int) {
+// 	tab.Lock()
+// 	for count := 0 ; count < ci ; count++ {  }
+// 	tab.Unlock()
+// }
+
+// func (tab *Table) AppendJ(i, cj, x, y int) {
+
+// }
