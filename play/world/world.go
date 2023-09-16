@@ -5,7 +5,7 @@ import (
 	"rhymald/mag-eta/play/character"
 	// "math"
 	"sync"
-	// "fmt"
+	"fmt"
 )
 
 type World struct {
@@ -27,8 +27,8 @@ func Init_World() *World {
 	buffer.ByID = Init_ByIDList()
 	buffer.Queue.Chan = make(chan map[string][2]int)
 	buffer.Queue.Buffer = []map[string][2]int{}
-	buffer.Queue.Size = 2 * functions.TRange * 618 / 1000
-	buffer.Queue.Timeout = functions.TAxisStep * 618 / 1000
+	buffer.Queue.Size = 2 * functions.TRange * 1000 / 618
+	buffer.Queue.Timeout = functions.TAxisStep * 1000 / 618
 	buffer.ID = functions.GetID( functions.StartEpoch/3600000000, functions.StartEpoch%3600000000 )
 	buffer.Grid = Init_Grid(buffer.ID)
 	// for i:=0 ; i<3 ; i++ {buffer.Grid[i] = Init_Grid(0, 0)}
@@ -62,6 +62,7 @@ func (w *World) Login(st *character.State) string {
 
 func (w *World) GridBuffer_ByPush() {
 	// var wg sync.WaitGroup
+	_, timewatcher := 0, 0
 	timer := 0 
 	writeToCache := (*w).Queue.Chan
 	for { //for input := range writeToCache {
@@ -78,8 +79,9 @@ func (w *World) GridBuffer_ByPush() {
 			buffer := (*w).Queue.Buffer
 			(*w).Queue.Buffer = []map[string][2]int{}
 			(*w).Queue.Unlock()
-			for _, each := range buffer { (*w).Grid.Nonce(each) }
-			// fmt.Println("Written:", buffer)
+			for _, each := range buffer { (*w).Grid.Nonce(each) ; (*w).Grid.GetAgainst(0) }
+			timewatcher = functions.EpochNS() - timer*1000000
+			fmt.Printf("\r => Written: %9.3fms / %4d = %9.3fms\r", float64(timewatcher)/1000000, bufferSize, float64(timewatcher)/1000000/float64(bufferSize))
 		}
 		// for id, posList := range input { 
 		// 	wg.Add(1)

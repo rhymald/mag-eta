@@ -4,7 +4,7 @@ import (
 	"math"
 )
 
-const XYAxisStep = 32
+// const XYAxisStep = 32
 
 func Round(a float64) int { return int(math.Round(a)) }
 func CeilRound(a float64) int { return int(math.Ceil(a)) } 

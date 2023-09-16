@@ -83,7 +83,7 @@ func (st *State) Move(rotate float64, step bool, writeToCache chan map[string][2
 	write.Unlock()
 	// toWrite[id] = append(toWrite[id], [3]int{now, newstep[2], newstep[3]})
 	toWrite := make(map[string][2]int) // id: x, y
-	toWrite[id] = [2]int{latestStep[2], latestStep[3]}
+	toWrite[id] = [2]int{newstep[2], newstep[3]}
 	writeToCache <- toWrite
 	functions.Wait(float64(tAxisStep)*math.Pi)// / math.Log2(dTrace[1]ance+1)) // 1.536 - 0.256
 }

@@ -42,7 +42,6 @@ func (gr *Grid) GetAll(lock bool) (map[string][3]int) { // x, y, i
 	if lock { gr.Lock() }
 	for i, each := range (*gr).Reg { if _, ok := buffer[each[0].(string)] ; !ok {
 		buffer[each[0].(string)] = [3]int{ each[1].(int), each[2].(int), i } 
-
 	} else {
 		fmt.Println("WARNING[World.Grid.GetAll()] Duplicated id:", each[0].(string))
 	}}
@@ -50,14 +49,15 @@ func (gr *Grid) GetAll(lock bool) (map[string][3]int) { // x, y, i
 	return buffer
 }
 
-func (gr *Grid) GetAgainst(target interface{}) [][]string {
+func (gr *Grid) GetAgainst(step float64) [][]string {
+	if step <= 0.1 { step = 1 }
 	read := gr.GetAll(true)
 	var buffer = [][]string{ []string{} } 
 	// var targetPos [2]int
 	// ints, isInts := target.([2]int) 
 	// strng, isStr := target.(string) ; isStr = isStr && len(strng) == 24
 	for id, xyi := range read {
-		far := functions.Round(math.Log2(1+float64(xyi[0]*xyi[0] + xyi[1]*xyi[1])))
+		far := functions.Round(math.Log2( 1 + math.Sqrt(float64(xyi[0]*xyi[0] + xyi[1]*xyi[1])) / 1000 / step))
 		diff := far - len(buffer) + 1 
 		if diff > 0 { for x:=0 ; x<diff ; x++ { buffer = append(buffer, []string{}) }}
 		buffer[far] = append(buffer[far], id)
