@@ -3,9 +3,9 @@ package world
 import (
 	"rhymald/mag-eta/balance/functions"
 	"rhymald/mag-eta/play/character"
-	// "math"
+	"math"
 	"sync"
-	"fmt"
+	// "fmt"
 )
 
 type World struct {
@@ -15,8 +15,8 @@ type World struct {
 		Chan chan map[string][2]int
 		Buffer []map[string][2]int
 		sync.Mutex
-		Size int
-		Timeout int
+		// Size int
+		// Timeout int
 	}
 	ByID *ByIDList
 	sync.Mutex
@@ -27,8 +27,8 @@ func Init_World() *World {
 	buffer.ByID = Init_ByIDList()
 	buffer.Queue.Chan = make(chan map[string][2]int)
 	buffer.Queue.Buffer = []map[string][2]int{}
-	buffer.Queue.Size = 2 * functions.TRange * 1000 / 618
-	buffer.Queue.Timeout = functions.TAxisStep * 1000 / 618
+	// buffer.Queue.Size = functions.TRange * 2
+	// buffer.Queue.Timeout = functions.TAxisStep * 618 / 1000
 	buffer.ID = functions.GetID( functions.StartEpoch/3600000000, functions.StartEpoch%3600000000 )
 	buffer.Grid = Init_Grid(buffer.ID)
 	// for i:=0 ; i<3 ; i++ {buffer.Grid[i] = Init_Grid(0, 0)}
@@ -62,7 +62,7 @@ func (w *World) Login(st *character.State) string {
 
 func (w *World) GridBuffer_ByPush() {
 	// var wg sync.WaitGroup
-	_, timewatcher := 0, 0
+	// _, timewatcher := 0, 0
 	timer := 0 
 	writeToCache := (*w).Queue.Chan
 	for { //for input := range writeToCache {
@@ -70,9 +70,9 @@ func (w *World) GridBuffer_ByPush() {
 		(*w).Grid.GetAgainst(0)
 		(*w).Queue.Lock()
 		(*w).Queue.Buffer = append((*w).Queue.Buffer, input)
-		triggered := functions.Epoch() - timer >= (*w).Queue.Timeout
+		triggered := functions.Epoch() - timer >= functions.TAxisStep * 618 / 1000
 		bufferSize := len((*w).Queue.Buffer) 
-		triggered = triggered || bufferSize >= (*w).Queue.Size
+		triggered = triggered || bufferSize >= functions.CeilRound( float64(functions.TRange) + math.Pow(math.Cbrt(1+float64((*w).ByID.Len())),2) )
 		(*w).Queue.Unlock()
 		if triggered {
 			timer = functions.Epoch()
@@ -84,9 +84,11 @@ func (w *World) GridBuffer_ByPush() {
 			for _, each := range buffer { for id, pos := range each {
 				write[id] = pos
 			}}
-			(*w).Grid.Nonce(write)
-			timewatcher = functions.EpochNS() - timer*1000000
-			fmt.Printf("\r => Written: %9.3fms / %4d = %9.3fms\r", float64(timewatcher)/1000000, bufferSize, float64(timewatcher)/1000000/float64(bufferSize))
+			go func(){
+				(*w).Grid.Nonce(write)
+				// timewatcher = functions.EpochNS() - timer*1000000
+				// fmt.Printf("\r => Written: %9.3fms / %4d = %9.3fms\r", float64(timewatcher)/1000000, bufferSize, float64(timewatcher)/1000000/float64(bufferSize))
+			}()
 		}
 		// for id, posList := range input { 
 		// 	wg.Add(1)
