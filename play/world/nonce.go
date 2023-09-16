@@ -49,7 +49,7 @@ func (gr *Grid) GetAll(lock bool) (map[string][3]int) { // x, y, i
 	return buffer
 }
 
-func (gr *Grid) GetAgainst(step float64) [][]string {
+func (gr *Grid) GetAgainst(step float64) [][]string { // step+ for all, delim by area; step- for within by +1
 	if step <= 0.1 { step = 1 }
 	read := gr.GetAll(true)
 	var buffer = [][]string{ []string{} } 

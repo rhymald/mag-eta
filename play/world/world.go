@@ -67,6 +67,7 @@ func (w *World) GridBuffer_ByPush() {
 	writeToCache := (*w).Queue.Chan
 	for { //for input := range writeToCache {
 		input := <- writeToCache // just a black hole
+		(*w).Grid.GetAgainst(0)
 		(*w).Queue.Lock()
 		(*w).Queue.Buffer = append((*w).Queue.Buffer, input)
 		triggered := functions.Epoch() - timer >= (*w).Queue.Timeout
@@ -79,7 +80,11 @@ func (w *World) GridBuffer_ByPush() {
 			buffer := (*w).Queue.Buffer
 			(*w).Queue.Buffer = []map[string][2]int{}
 			(*w).Queue.Unlock()
-			for _, each := range buffer { (*w).Grid.Nonce(each) ; (*w).Grid.GetAgainst(0) }
+			write := make(map[string][2]int)
+			for _, each := range buffer { for id, pos := range each {
+				write[id] = pos
+			}}
+			(*w).Grid.Nonce(write)
 			timewatcher = functions.EpochNS() - timer*1000000
 			fmt.Printf("\r => Written: %9.3fms / %4d = %9.3fms\r", float64(timewatcher)/1000000, bufferSize, float64(timewatcher)/1000000/float64(bufferSize))
 		}
