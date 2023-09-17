@@ -2,10 +2,7 @@ package functions
 
 import (
 	"errors"
-	"runtime"
 )
-
-var Threads = runtime.GOMAXPROCS(runtime.NumCPU()-1)
 
 type ErrorList map[string]error 
 var (

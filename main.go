@@ -2,8 +2,7 @@ package main
 
 import (
 	"rhymald/mag-eta/api"
-	"rhymald/mag-eta/balance/functions"
-	"flag"
+	// "rhymald/mag-eta/balance/functions"
 	"fmt"
 )
 
@@ -12,7 +11,6 @@ var (
 )
 
 func init() {
-	flag.IntVar(&functions.Threads, "t", 4, "Threads to execute global queues")
 	fmt.Println(" >>>>> Application is getting started... <<<<<")
 }
 

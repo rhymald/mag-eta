@@ -3,6 +3,7 @@ package world
 import (
 	"rhymald/mag-eta/balance/functions"
 	"rhymald/mag-eta/play/character"
+	"runtime"
 	"math"
 	"sync"
 	"log"
@@ -30,7 +31,9 @@ type World struct {
 func Init_World() *World {
 	var buffer World
 	buffer.ByID = Init_ByIDList()
-	for t:=0 ; t<functions.Threads ; t++ {
+	threads := runtime.GOMAXPROCS(runtime.NumCPU()) - 1
+	log.Println(" >>> World has", threads, "queues")
+	for t:=0 ; t<threads-1 ; t++ {
 		buffer.MQ = append(buffer.MQ, Init_MoveQueue())
 	}
 	buffer.ID = functions.GetID( functions.StartEpoch/3600000000, functions.StartEpoch%3600000000 )
@@ -71,6 +74,7 @@ func (w *World) GimmeThread(bid int) *MoveQueue {
 	if len((*w).MQ) > 0 { 
 		w.Lock()
 		buffer := (*w).MQ[bid%threads]
+		// log.Println(" Attaching to thread:", bid%threads)
 		w.Unlock()
 		return buffer
 	}
