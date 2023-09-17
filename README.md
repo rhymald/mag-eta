@@ -10,6 +10,15 @@
 6. Zeta: [here](https://github.com/rhymald/mag-zeta/tree/N7S-world) - successfully transactional, with movements across world grid
 7. Eta: current repo - will be transactional, block tree
 
+# Tests: 
+
+|When|Resources|Total objects|Read|Comment|
+|:-|:-:|:-:|:-:|-:|
+|N9G: 1.5-D index, no panic on empty trace|4C 6G|32000|20ms|Unknown|
+|N9G: 1.5-D index, no panic on empty trace|4C 6G|51725|40ms|Some objects cant move, - not enough CPU|
+|N9G: 1.5-D index, anic on empty trace|4C 6G|7675-7862|No trace|CPU used for 335%|
+|N9G: 1.5-D index, anic on empty trace|7C 1G|???|No trace|CPU used for 335%|
+
 # How-to
 
 List all funcs and types:

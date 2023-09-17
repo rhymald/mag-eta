@@ -2,9 +2,9 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"rhymald/mag-eta/balance/functions"
+	// "rhymald/mag-eta/balance/functions"
 	"rhymald/mag-eta/play/character"
-	"math"
+	// "math"
 	// "fmt"
 )
 
@@ -54,12 +54,12 @@ func spawn(c *gin.Context) {
 	base := character.Init_BasicStats()
 	char := base.Init_Character()
 	char.Init_Attributes()
-	state := char.Init_State()
+	state := char.Init_State() ; state.Move( 0, false, theWorld.Queue.Chan )
 	id := theWorld.Login(state)
-	go func(){ functions.Wait(100) ; state.Lifecycle_EffectConsumer() }()
-	go func(){ functions.Wait(600) ; state.Lifecycle_Regenerate() }()
-	direction := functions.Rand() - functions.Rand()
-	direction = direction / (math.Abs(direction))
-	go func(){ functions.Wait(4000) ; for { state.Move( direction/24, true, theWorld.Queue.Chan ) }}()
-	c.IndentedJSON(200, struct{ ID string ; Result string }{ ID: id, Result: "Successfully spawned" })
+	go func(){ state.Lifecycle_EffectConsumer() }()
+	go func(){ state.Lifecycle_Regenerate() }()
+	// direction := functions.Rand() - functions.Rand()
+	// direction = direction / (math.Abs(direction))
+	go func(){ for { state.Move( 1/24, true, theWorld.Queue.Chan ) }}()
+	c.IndentedJSON(201, struct{ ID string ; Result string }{ ID: id, Result: "Successfully spawned" })
 }

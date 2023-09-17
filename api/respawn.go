@@ -8,6 +8,7 @@ import (
 )
 
 var theWorld = world.Init_World()
+var AllowLogin = true
 
 func login(c *gin.Context) { 
 	base := character.Init_BasicStats()
@@ -22,5 +23,5 @@ func login(c *gin.Context) {
 	// direction := functions.Rand() - functions.Rand()
 	// direction = direction / (math.Abs(direction))
 	// go func(){ functions.Wait(4000) ; for { state.Move( direction*(1+2*functions.Rand())/24, true, theWorld.Queue.Chan ) }}()
-	c.IndentedJSON(200, struct{ ID string ; Result string }{ ID: id, Result: "Successfully Logged In" })
+	c.IndentedJSON(201, struct{ ID string ; Result string }{ ID: id, Result: "Successfully Logged In" })
 }

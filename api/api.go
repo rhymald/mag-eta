@@ -7,12 +7,12 @@ import (
 )
 
 type LogEvent struct {
-	Status  int    `json:"Status"`
-	Time    string `json:"Time"`
-	Latency string `json:"Latency"`
 	Source  string `json:"Source"`
 	Method  string `json:"Method"`
 	Path    string `json:"Path"`
+	Status  int    `json:"Status"`
+	Latency string `json:"Latency"`
+	Time    string `json:"Time"`
 }
 
 func Init_API(ipAddr string) {

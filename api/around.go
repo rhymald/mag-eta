@@ -5,6 +5,7 @@ import (
 	"rhymald/mag-eta/play/character"
 	"rhymald/mag-eta/balance/functions"
 	"math"
+	"log"
 )
 
 func around(c *gin.Context) { 
@@ -27,6 +28,7 @@ func around(c *gin.Context) {
 	allstates := read.GetAll()
 	for id, each := range allstates { // race-3 race-8
 		path := each.Path()
+		if path == [5][2]int{} { log.Fatalln(functions.FatalErrors["NotEnoughCPU"]) }
 		beyond := functions.Vector( float64(path[1][0]-first[0]), float64(path[1][1]-first[1]) ) > distanceLimit
 		if id == takenID || counter >= objectLimit || beyond { continue }
 		buffer = append(buffer, each.Current.Simplify( path ))

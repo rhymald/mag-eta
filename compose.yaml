@@ -14,11 +14,11 @@ services:
     deploy:
       resources:
         limits:
-          # cpus: '0.2'
-          memory: 6144M
+          cpus: '7'
+          memory: 1024M
         reservations:
-          # cpus: '0.5'
-          memory: 6144M
+          cpus: '7'
+          memory: 1024M
     # links:
       # - cockroachdb
       # - otel-collector
