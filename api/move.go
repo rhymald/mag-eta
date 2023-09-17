@@ -18,7 +18,10 @@ func move(c *gin.Context) {
 		theWorld.ByID.Unlock()
 		myPlayer, _ := read.Read(takenID) //; ok { myPlayer, _ = read.Read(takenID) } else { myPlayer = nil }
 		if myPlayer != nil && err == nil {
-			myPlayer.Move( float64(where)/1000, true, theWorld.Queue.Chan )
+			myPlayer.Current.Base.Lock()
+			thread := theWorld.GimmeThread((*myPlayer.Current.Base).ID)
+			myPlayer.Current.Base.Unlock()
+			myPlayer.Move( float64(where)/1000, true, (*thread).Chan )
 			c.IndentedJSON(200, "Moved")
 		} else {
 			c.IndentedJSON(400, []string{ "Bad request headers:", "- myplayerid parsed:", fmt.Sprint(myPlayer), "- direction parsed:", fmt.Sprint(err) })

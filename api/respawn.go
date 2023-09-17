@@ -5,13 +5,14 @@ import (
 	"rhymald/mag-eta/play/character"
 	"rhymald/mag-eta/play/world"
 	"rhymald/mag-eta/balance/functions"
+	"rhymald/mag-eta/balance/primitives"
 )
 
 var theWorld = world.Init_World()
 var AllowLogin = true
 
 func login(c *gin.Context) { 
-	base := character.Init_BasicStats()
+	base := character.Init_BasicStats(primitives.PhysList[1])
 	char := base.Init_Character()
 	char.Init_Attributes()
 	state := char.Init_State()

@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	// "rhymald/mag-eta/balance/functions"
 	"rhymald/mag-eta/play/character"
+	"rhymald/mag-eta/balance/primitives"
 	// "math"
 	// "fmt"
 )
@@ -51,15 +52,20 @@ func testWorld(c *gin.Context) {
 }
 
 func spawn(c *gin.Context) { 
-	base := character.Init_BasicStats()
+	base := character.Init_BasicStats(primitives.PhysList[2])
 	char := base.Init_Character()
 	char.Init_Attributes()
-	state := char.Init_State() ; state.Move( 0, false, theWorld.Queue.Chan )
+	state := char.Init_State()
+	state.Current.Base.Lock()
+	thread := theWorld.GimmeThread((*state.Current.Base).ID)
+	state.Current.Base.Unlock()
+	// myPlayer.Move( float64(where)/1000, true, (*thread).Chan )
+	state.Move( 0, false, (*thread).Chan )
 	id := theWorld.Login(state)
 	go func(){ state.Lifecycle_EffectConsumer() }()
 	go func(){ state.Lifecycle_Regenerate() }()
 	// direction := functions.Rand() - functions.Rand()
 	// direction = direction / (math.Abs(direction))
-	go func(){ for { state.Move( 1/24, true, theWorld.Queue.Chan ) }}()
+	go func(){ for { state.Move( 1/24, true, (*thread).Chan ) }}()
 	c.IndentedJSON(201, struct{ ID string ; Result string }{ ID: id, Result: "Successfully spawned" })
 }

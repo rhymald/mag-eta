@@ -5,6 +5,7 @@ services:
   mag: 
     build: .
   # image: rhymald/mag:latest
+    command: -t 1
     ports:
       - 4917:4917
       # - 9093:9093

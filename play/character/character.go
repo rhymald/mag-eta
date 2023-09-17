@@ -28,7 +28,7 @@ type BasicStats struct {
 	sync.Mutex
 }
 
-func Init_BasicStats() *BasicStats {
+func Init_BasicStats(e string) *BasicStats {
 	var buffer BasicStats
 	buffer.ID = functions.Epoch()
 	luck := functions.EpochNS() % 2
@@ -38,7 +38,7 @@ func Init_BasicStats() *BasicStats {
 			primitives.Init_Stream(primitives.ElemList[ (functions.EpochNS()%2)*(luck+1) ]),
 		)
 	}
-	buffer.Body = primitives.Init_Stream(primitives.PhysList[1])
+	buffer.Body = primitives.Init_Stream(e)
 	return &buffer
 }
 

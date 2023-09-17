@@ -5,19 +5,24 @@ import (
 	"rhymald/mag-eta/play/character"
 	"math"
 	"sync"
+	"log"
 	// "fmt"
 )
+
+type MoveQueue struct {
+	Chan chan map[string][2]int
+	Buffer []map[string][2]int
+	sync.Mutex
+	// Size int
+	// Timeout int
+}
+
 
 type World struct {
 	ID string
 	Grid *Grid
-	Queue struct {
-		Chan chan map[string][2]int
-		Buffer []map[string][2]int
-		sync.Mutex
-		// Size int
-		// Timeout int
-	}
+	MQ []*MoveQueue
+	// AQ []*ActQueue
 	ByID *ByIDList
 	sync.Mutex
 }
@@ -25,18 +30,27 @@ type World struct {
 func Init_World() *World {
 	var buffer World
 	buffer.ByID = Init_ByIDList()
-	buffer.Queue.Chan = make(chan map[string][2]int)
-	buffer.Queue.Buffer = []map[string][2]int{}
-	// buffer.Queue.Size = functions.TRange * 2
-	// buffer.Queue.Timeout = functions.TAxisStep * 618 / 1000
+	for t:=0 ; t<functions.Threads ; t++ {
+		buffer.MQ = append(buffer.MQ, Init_MoveQueue())
+	}
 	buffer.ID = functions.GetID( functions.StartEpoch/3600000000, functions.StartEpoch%3600000000 )
 	buffer.Grid = Init_Grid(buffer.ID)
+	// buffer.Queue.Size = functions.TRange * 2
+	// buffer.Queue.Timeout = functions.TAxisStep * 618 / 1000
 	// for i:=0 ; i<3 ; i++ {buffer.Grid[i] = Init_Grid(0, 0)}
 	// go func(){ (&buffer).GridWriter_FromBuffer() }()
-	go func(){ (&buffer).GridBuffer_ByPush() }()
+	for _, each := range buffer.MQ {
+		go func(){ (&buffer).GridBuffer_ByPush(each) }()
+	}
 	return &buffer
 }
 
+func Init_MoveQueue() *MoveQueue {
+	var buffer MoveQueue
+	buffer.Chan = make(chan map[string][2]int)
+	buffer.Buffer = []map[string][2]int{}
+	return &buffer
+}
 // func (w *World) WhichGrid() (*Grid, *Grid) {
 // 	tAxisStep, tRange := functions.TAxisStep, functions.TRange
 // 	epoch := functions.Epoch()
@@ -49,6 +63,21 @@ func Init_World() *World {
 // 	return read, write
 // }
 
+func (w *World) GimmeThread(bid int) *MoveQueue {
+	var blackhole MoveQueue
+	w.Lock()
+	threads := len((*w).MQ)
+	w.Unlock()
+	if len((*w).MQ) > 0 { 
+		w.Lock()
+		buffer := (*w).MQ[bid%threads]
+		w.Unlock()
+		return buffer
+	}
+	log.Fatalln(functions.FatalErrors["NoThreadAssigned"])
+	return &blackhole
+} 
+
 func (w *World) Login(st *character.State) string {
 	// w.ByID.Lock()
 	(*st.Current).Base.Lock() ; (*st.Current).Atts.Lock()
@@ -60,26 +89,26 @@ func (w *World) Login(st *character.State) string {
 	return id
 }
 
-func (w *World) GridBuffer_ByPush() {
+func (w *World) GridBuffer_ByPush(q *MoveQueue) {
 	// var wg sync.WaitGroup
 	// _, timewatcher := 0, 0
 	timer := 0 
-	writeToCache := (*w).Queue.Chan
+	writeToCache := (*q).Chan
 	for { //for input := range writeToCache {
 		input := <- writeToCache // just a black hole
 		(*w).Grid.GetAgainst(0)
-		(*w).Queue.Lock()
-		(*w).Queue.Buffer = append((*w).Queue.Buffer, input)
+		q.Lock()
+		(*q).Buffer = append((*q).Buffer, input)
 		triggered := functions.Epoch() - timer >= functions.TAxisStep * 618 / 1000
-		bufferSize := len((*w).Queue.Buffer) 
+		bufferSize := len((*q).Buffer) 
 		triggered = triggered || bufferSize >= functions.CeilRound( float64(functions.TRange) + math.Pow(math.Cbrt(1+float64((*w).ByID.Len())),2) )
-		(*w).Queue.Unlock()
+		(*q).Unlock()
 		if triggered {
 			timer = functions.Epoch()
-			(*w).Queue.Lock()
-			buffer := (*w).Queue.Buffer
-			(*w).Queue.Buffer = []map[string][2]int{}
-			(*w).Queue.Unlock()
+			(*q).Lock()
+			buffer := (*q).Buffer
+			(*q).Buffer = []map[string][2]int{}
+			(*q).Unlock()
 			write := make(map[string][2]int)
 			for _, each := range buffer { for id, pos := range each {
 				write[id] = pos
@@ -111,11 +140,11 @@ func (w *World) GridBuffer_ByPush() {
 // 	pause := 0.0// float64(functions.TAxisStep) / math.Phi
 // 	var wg sync.WaitGroup
 // 	for {
-// 		(*w).Queue.Lock()
-// 		input := (*w).Queue.Buffer
-// 		if len(input) < 10 { (*w).Queue.Unlock() ; continue }
-// 		(*w).Queue.Buffer = []map[string][][3]int{}
-// 		(*w).Queue.Unlock()
+// 		(*q).Lock()
+// 		input := (*q).Buffer
+// 		if len(input) < 10 { (*q).Unlock() ; continue }
+// 		(*q).Buffer = []map[string][][3]int{}
+// 		(*q).Unlock()
 // 		wg.Add(1)
 // 		go func(wg *sync.WaitGroup){
 // 			counterT, found, avgT, meanT := 0, 0, 0.0, 0.0
