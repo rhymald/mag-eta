@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	// "rhymald/mag-eta/balance/functions"
+	"rhymald/mag-eta/balance/primitives"
 	"rhymald/mag-eta/play/character"
 	// "math"
 	// "fmt"
@@ -51,7 +52,7 @@ func testWorld(c *gin.Context) {
 }
 
 func spawn(c *gin.Context) { 
-	base := character.Init_BasicStats()
+	base := character.Init_BasicStats(primitives.PhysList[2])
 	char := base.Init_Character()
 	char.Init_Attributes()
 	state := char.Init_State() ; state.Move( 0, false, theWorld.Queue.Chan )

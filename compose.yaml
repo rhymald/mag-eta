@@ -15,10 +15,10 @@ services:
       resources:
         limits:
           cpus: '7'
-          memory: 1024M
+          memory: 10240M
         reservations:
           cpus: '7'
-          memory: 1024M
+          memory: 4096M
     # links:
       # - cockroachdb
       # - otel-collector
