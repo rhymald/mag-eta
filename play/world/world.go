@@ -31,9 +31,9 @@ type World struct {
 func Init_World() *World {
 	var buffer World
 	buffer.ByID = Init_ByIDList()
-	threads := runtime.GOMAXPROCS(runtime.NumCPU()) - 1
+	threads := runtime.GOMAXPROCS(runtime.NumCPU()) * 0 + 2
 	log.Println(" >>> World has", threads, "queues")
-	for t:=0 ; t<threads-1 ; t++ {
+	for t:=0 ; t<threads ; t++ {
 		buffer.MQ = append(buffer.MQ, Init_MoveQueue())
 	}
 	buffer.ID = functions.GetID( functions.StartEpoch/3600000000, functions.StartEpoch%3600000000 )

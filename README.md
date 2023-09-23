@@ -18,6 +18,7 @@
 |N9G: 1.5-D index, no panic on empty trace|4C 6G|51725|40ms|Some objects cant move, - not enough CPU|
 |N9G: 1.5-D index, panic on empty trace|4C 6G|7675-7862|No trace|CPU used for 335%|
 |N9H: 1.5-D index, panic on empty trace, multithread|7C 1G|5820|No trace|Out of memory|
+|N9H: 1.5-D index, panic on empty trace, single thread|7C 6G|5809 live + 702 dead|No trace|Out of memory|
 |N9H: 1.5-D index, panic on empty trace, multithread|7C 6G|15216|No trace|Out of memory|
 
 # How-to

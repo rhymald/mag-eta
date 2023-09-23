@@ -26,13 +26,15 @@ func around(c *gin.Context) {
 	}
 	counter := 0
 	allstates := read.GetAll()
+	okies, passen, notokies := 0.0, 0.0, 0.0
 	for id, each := range allstates { // race-3 race-8
 		path := each.Path()
-		if path == [5][2]int{} { log.Fatalln(functions.FatalErrors["NotEnoughCPU"]) }
+		if path == [5][2]int{} { notokies += 1 ; continue } else { okies += 1 }
 		beyond := functions.Vector( float64(path[1][0]-first[0]), float64(path[1][1]-first[1]) ) > distanceLimit
 		if id == takenID || counter >= objectLimit || beyond { continue }
 		buffer = append(buffer, each.Current.Simplify( path ))
 		counter++
 	} 
+	if notokies != 0 { log.Fatalf("%v - Okies: %0.0f, Stuck: %0.0f, Passen: %0.0f", functions.Warnings["NotEnoughCPU"], okies, notokies, passen) }
 	c.JSON(200, buffer)
 }
