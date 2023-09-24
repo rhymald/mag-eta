@@ -11,6 +11,7 @@
 5. Epsilon: [here](https://github.com/rhymald/mag-epsilon/tree/N3G-character) - interactive CLI, trying transactional
 6. Zeta: [here](https://github.com/rhymald/mag-zeta/tree/N7S-world) - successfully transactional, with movements across world grid
 7. Eta: current repo - will be transactional, block tree
+8. Theta: [here](https://github.com/rhymald/mag-theta) - V-lang, primitives
 
 # Tests: 
 
