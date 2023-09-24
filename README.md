@@ -1,6 +1,8 @@
 # Welcome!
 
 > MAG-eta started as 7th attempt!
+>
+> PAUSED: A problem with movement and objects are getting lost occasionally...
 
 1. Alpha: Not published - primitives
 2. Beta: Not published - primitives, fighting mechanics

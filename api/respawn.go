@@ -15,8 +15,8 @@ func login(c *gin.Context) {
 	base := character.Init_BasicStats(primitives.PhysList[1])
 	char := base.Init_Character()
 	char.Init_Attributes()
-	state := char.Init_State()
-	id := theWorld.Login(state)
+	state := char.Init_State() ; state.Move( 0, false, theWorld.Queue.Chan ) ; state.Move( 0, false, theWorld.Queue.Chan )
+	id := theWorld.Login(state) // does not work with empty trace
 	// _, writer := theWorld.WhichGrid()
 	// writer.Reg.Register(id)
 	go func(){ state.Lifecycle_EffectConsumer() }()

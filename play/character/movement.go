@@ -45,8 +45,8 @@ func (st *State) Move(rotate float64, step bool, writeToCache chan map[string][2
 		add := [4]int{ // race-6
 			now,
 			functions.ChancedRound( 2000*functions.Rand()-1000 )/250*250, 
-			functions.ChancedRound( 20000*functions.Rand()-10000 ), 
-			functions.ChancedRound( 20000*functions.Rand()-10000 ),
+			functions.ChancedRound( 200000*functions.Rand()-100000 ), 
+			functions.ChancedRound( 200000*functions.Rand()-100000 ),
 		}
 		renew = append(renew, add)
 		(*write).Trxy = renew
@@ -85,7 +85,7 @@ func (st *State) Move(rotate float64, step bool, writeToCache chan map[string][2
 	toWrite := make(map[string][2]int) // id: x, y
 	toWrite[id] = [2]int{newstep[2], newstep[3]}
 	writeToCache <- toWrite
-	functions.Wait(float64(tAxisStep)*math.Pi)// / math.Log2(dTrace[1]ance+1)) // 1.536 - 0.256
+	functions.Wait(float64(tAxisStep))// / math.Log2(dTrace[1]ance+1)) // 1.536 - 0.256
 }
 
 func (st *State) Path() [5][2]int {

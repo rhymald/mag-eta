@@ -24,7 +24,7 @@ func Init_API(ipAddr string) {
 	router.Use(gin.Recovery())
 	router.Use(jsonLoggerMiddleware())
 	router.GET("/", around)
-	router.GET("/:myplayerid", around)
+	router.GET("/at/:myplayerid", around)
 	router.GET("/login", login)
 	router.GET("/test/world", testWorld)
 	router.GET("/test/spawn", spawn)
