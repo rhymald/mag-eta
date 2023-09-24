@@ -67,7 +67,7 @@ func (w *World) GridBuffer_ByPush() {
 	writeToCache := (*w).Queue.Chan
 	for { //for input := range writeToCache {
 		input := <- writeToCache // just a black hole
-		(*w).Grid.GetAgainst(0)
+		for _, pos := range input { (*w).Grid.GetAgainst(0, pos) }
 		(*w).Queue.Lock()
 		(*w).Queue.Buffer = append((*w).Queue.Buffer, input)
 		triggered := functions.Epoch() - timer >= functions.TAxisStep * 618 / 1000

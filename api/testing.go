@@ -47,7 +47,7 @@ func testWorld(c *gin.Context) {
 	// buffer.Xw = writer.X.Get(targetX, targetAOE, targetT)
 	// buffer.Yw = writer.Y.Get(targetY, targetAOE, targetT)
 	// writer.Unlock()
-	output := theWorld.Grid.GetAgainst(3)
+	output := theWorld.Grid.GetAgainst(3, [2]int{0,0})
 	c.IndentedJSON(200, output)
 }
 
