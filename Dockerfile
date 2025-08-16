@@ -8,5 +8,5 @@ RUN GCO_ENABLED=0 GOOS=linux go build -o mag
 
 FROM ubuntu:mantic 
 COPY --from=builder /app/mag /mag
-EXPOSE 4917 9093
+EXPOSE 4917
 ENTRYPOINT ["./mag"]

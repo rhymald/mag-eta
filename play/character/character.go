@@ -1,4 +1,4 @@
-package play
+package character
 
 import (
 	"rhymald/mag-eta/balance/primitives"
@@ -18,15 +18,17 @@ type Attributes struct {
 	ID int
 	Vitality float64
 	Capacity float64
+	sync.Mutex
 }
 
 type BasicStats struct {
 	ID int
 	Body *primitives.Stream
 	Energy []*primitives.Stream
+	sync.Mutex
 }
 
-func Init_BasicStats() *BasicStats {
+func Init_BasicStats(e string) *BasicStats {
 	var buffer BasicStats
 	buffer.ID = functions.Epoch()
 	luck := functions.EpochNS() % 2
@@ -36,7 +38,7 @@ func Init_BasicStats() *BasicStats {
 			primitives.Init_Stream(primitives.ElemList[ (functions.EpochNS()%2)*(luck+1) ]),
 		)
 	}
-	buffer.Body = primitives.Init_Stream(primitives.PhysList[1])
+	buffer.Body = primitives.Init_Stream(e)
 	return &buffer
 }
 

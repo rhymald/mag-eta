@@ -1,6 +1,8 @@
 # Welcome!
 
 > MAG-eta started as 7th attempt!
+>
+> PAUSED: A problem with movement and objects are getting lost occasionally...
 
 1. Alpha: Not published - primitives
 2. Beta: Not published - primitives, fighting mechanics
@@ -9,6 +11,17 @@
 5. Epsilon: [here](https://github.com/rhymald/mag-epsilon/tree/N3G-character) - interactive CLI, trying transactional
 6. Zeta: [here](https://github.com/rhymald/mag-zeta/tree/N7S-world) - successfully transactional, with movements across world grid
 7. Eta: current repo - will be transactional, block tree
+8. Theta: [here](https://github.com/rhymald/mag-theta) - V-lang, primitives
+
+# Tests: 
+
+|When|Resources|Total objects|Read|Comment|
+|:-|:-:|:-:|:-:|-:|
+|N9G: 1.5-D index, no panic on empty trace|4C 6G|32000|20ms|Unknown|
+|N9G: 1.5-D index, no panic on empty trace|4C 6G|51725|40ms|Some objects cant move, - not enough CPU|
+|N9G: 1.5-D index, panic on empty trace|4C 6G|7675-7862|No trace|CPU used for 335%|
+|N9H: 1.5-D index, panic on empty trace, multithread|7C 1G|5820|No trace|Out of memory|
+|N9H: 1.5-D index, panic on empty trace, multithread|7C 6G|15216|No trace|Out of memory|
 
 # How-to
 
